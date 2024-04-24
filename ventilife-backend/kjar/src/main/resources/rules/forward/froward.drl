@@ -1,0 +1,73 @@
+import com.ftn.sbnz.model.models.Patient
+import com.ftn.sbnz.model.models.RespiratorDecision
+
+rule "Frequency decision"
+    when
+        Patient($id: id, frequency > 35)
+        $decision: RespiratorDecision(patientId == $id, frequencyDecision == false)
+    then
+        $decision.setFrequencyDecision(true);
+        update($decision);
+        System.out.println("Frequency: true");
+end
+
+rule "Tidal volumen decision"
+    when
+        Patient($id: id, tidalVolume < 5)
+        $decision: RespiratorDecision(
+            patientId == $id,
+            frequencyDecision == true,
+            tidalVolumeDecision == false
+        )
+    then
+        $decision.setTidalVolumeDecision(true);
+        update($decision);
+        System.out.println("tidalVolume: true");
+end
+
+rule "pCO2 decision"
+    when
+        Patient($id: id, pCO2 > 7)
+        $decision: RespiratorDecision(
+            patientId == $id,
+            frequencyDecision == true,
+            tidalVolumeDecision == true,
+            pCO2Decision == false
+        )
+    then
+        $decision.setPCO2Decision(true);
+        update($decision);
+        System.out.println("pCO2: true");
+end
+
+rule "pO2 decision"
+    when
+        Patient($id: id, pO2 < 8)
+        $decision: RespiratorDecision(
+            patientId == $id,
+            frequencyDecision == true,
+            tidalVolumeDecision == true,
+            pCO2Decision == true,
+            pO2Decision == false
+        )
+    then
+        $decision.setPO2Decision(true);
+        update($decision);
+        System.out.println("pO2: true");
+end
+
+rule "Final decision"
+    when
+        Patient($id: id)
+        $decision: RespiratorDecision(
+            patientId == $id,
+            frequencyDecision == true,
+            tidalVolumeDecision == true,
+            pCO2Decision == true,
+            pO2Decision == true
+        )
+    then
+        $decision.setFinalDecision(true);
+        System.out.println("Patient " + $id + " must be put on the respirator!");
+end
+
