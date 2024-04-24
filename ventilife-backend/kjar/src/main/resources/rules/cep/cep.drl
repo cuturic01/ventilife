@@ -1,0 +1,20 @@
+package cep;
+
+import com.ftn.sbnz.model.events.Notification
+
+declare Delay
+    userId: Long
+end
+
+rule "Delay notification"
+    when
+        Notification($id: userId)
+        Number(intValue >= 7) from accumulate(
+            Notification(userId == $id)
+            over window: time(1m), count(1)
+        )
+        not Delay(userId == $id)
+    then
+        insert(new Delay($id));
+        System.out.println("Notification for user " + $id + " delayed.");
+end

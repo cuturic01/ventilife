@@ -1,0 +1,31 @@
+package backward;
+
+import com.ftn.sbnz.model.models.Certificate
+
+
+query isValid(String c, String rc, String v)
+    Certificate( certificate == rc, valid == v)
+    //Certificate( rc, , v; )
+    and
+    (
+        Certificate( c, rc, v; )
+        or
+        ( Certificate( newCert, rc, v; ) and isValid(c, newCert, v;))
+    )
+end
+
+rule "facbook"
+    when
+        String(this == "facebook")
+        //Certificate(certificate == "www.facebook.com", $rc: rootCertificate, valid == "validan")
+        isValid( "www.facebook.com", $a, "validan"; )
+    then
+        System.out.println("Facebook validan.");
+end
+
+rule "microsoft"
+    when
+        not isValid("www.microsoft1.com", $b, "validan"; )
+    then
+        System.out.println("Microsoft nevalidan.");
+end
