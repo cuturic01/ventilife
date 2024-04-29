@@ -1,31 +1,50 @@
 package backward;
 
 import com.ftn.sbnz.model.models.Certificate
+import com.ftn.sbnz.model.models.RespiratorMode
 
 
-query isValid(String c, String rc, String v)
-    Certificate( certificate == rc, valid == v)
-    //Certificate( rc, , v; )
-    and
-    (
-        Certificate( c, rc, v; )
-        or
-        ( Certificate( newCert, rc, v; ) and isValid(c, newCert, v;))
+query isModeAppropriate(String name, String group, Boolean patientConscious, Double participationPercentage)
+    $rm: RespiratorMode(
+        name,
+        group,
+        patientConscious;
     )
+    eval(
+            participationPercentage > $rm.getParticipationPercentageLB() &&
+            participationPercentage < $rm.getParticipationPercentageUB()
+    )
+//    or
+//    ( RespiratorMode(
+//        z,
+//        group,
+//        patientConscious,
+//        participationPercentage > participationPercentageLB,
+//        participationPercentage < participationPercentageUB;)
+//      and isModeAppropriate( name, z, patientConscious, participationPercentage;) )
 end
 
-rule "facbook"
+rule "Mode for patient"
     when
-        String(this == "facebook")
-        //Certificate(certificate == "www.facebook.com", $rc: rootCertificate, valid == "validan")
-        isValid( "www.facebook.com", $a, "validan"; )
     then
-        System.out.println("Facebook validan.");
 end
 
-rule "microsoft"
+rule "Recommended mode for patient"
     when
-        not isValid("www.microsoft1.com", $b, "validan"; )
     then
-        System.out.println("Microsoft nevalidan.");
+end
+
+rule "find mode"
+    when
+        RespiratorMode($sName:name, group == "Mode")
+        RespiratorMode(this != $sName, group == $sName, $sSubmode:name)
+    then
+        System.out.println("UNIMPORTANT: " + $sSubmode + " is mode of " + $sName);
+end
+
+rule "find assisted mode"
+    when
+        isModeAppropriate(mode, type, concious, 5.0;)
+    then
+        System.out.println(mode + " is " + type + " mode.");
 end
