@@ -5,4 +5,7 @@
     <kbase name="cepKbase" eventProcessingMode="stream" packages="cep">
         <ksession name="cepKsession" clockType="pseudo"/>
     </kbase>
+    <kbase name="fwKbase" eventProcessingMode="stream" packages="forward">
+        <ksession name="fwKsession" clockType="pseudo"/>
+    </kbase>
 </kmodule>
