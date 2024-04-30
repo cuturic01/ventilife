@@ -18,15 +18,25 @@ public class RespiratorMode {
     @Position(4)
     private Double participationPercentageUB;
 
+    private Double pO2LB;
+    private Double pO2UB;
+    private Double pCO2LB;
+    private Double pCO2UB;
+
     public RespiratorMode() {
     }
 
-    public RespiratorMode(String name, String group, Boolean conscious, Double participationPercentageLB, Double participationPercentageUB) {
+    public RespiratorMode(String name, String group, Boolean conscious, Double participationPercentageLB,
+                          Double participationPercentageUB, Double pO2LB, Double pO2UB, Double pCO2LB, Double pCO2UB) {
         this.name = name;
         this.group = group;
         this.conscious = conscious;
         this.participationPercentageLB = participationPercentageLB;
         this.participationPercentageUB = participationPercentageUB;
+        this.pO2LB = pO2LB;
+        this.pO2UB = pO2UB;
+        this.pCO2LB = pCO2LB;
+        this.pCO2UB = pCO2UB;
     }
 
     public String getName() {
@@ -67,5 +77,37 @@ public class RespiratorMode {
 
     public void setParticipationPercentageUB(Double participationPercentageUB) {
         this.participationPercentageUB = participationPercentageUB;
+    }
+
+    public Double getpO2LB() {
+        return pO2LB;
+    }
+
+    public void setpO2LB(Double pO2LB) {
+        this.pO2LB = pO2LB;
+    }
+
+    public Double getpO2UB() {
+        return pO2UB;
+    }
+
+    public void setpO2UB(Double pO2UB) {
+        this.pO2UB = pO2UB;
+    }
+
+    public Double getpCO2LB() {
+        return pCO2LB;
+    }
+
+    public void setpCO2LB(Double pCO2LB) {
+        this.pCO2LB = pCO2LB;
+    }
+
+    public Double getpCO2UB() {
+        return pCO2UB;
+    }
+
+    public void setpCO2UB(Double pCO2UB) {
+        this.pCO2UB = pCO2UB;
     }
 }

@@ -42,21 +42,34 @@ public class RulesTests {
                 "Mode",
                 true,
                 50.0,
-                100.0
+                100.0,
+                -6.0,
+                -1.0,
+                0.0,
+                1.0
+
         ));
         kieSession.insert(new RespiratorMode(
-                "SiPAP",
+                "CPAP",
                 "Spontaneous",
                 true,
                 85.0,
-                100.0
+                100.0,
+                -4.0,
+                -1.0,
+                0.0,
+                1.0
         ));
         kieSession.insert(new RespiratorMode(
                 "APRV",
                 "Spontaneous",
                 true,
                 50.0,
-                85.0
+                85.0,
+                -6.0,
+                -4.0,
+                0.0,
+                1.0
         ));
 
         kieSession.insert(new RespiratorMode(
@@ -64,20 +77,32 @@ public class RulesTests {
                 "Mode",
                 false,
                 0.0,
-                50.0
+                50.0,
+                -10.0,
+                -6.0,
+                1.0,
+                10.0
         ));
         kieSession.insert(new RespiratorMode(
                 "SIMV",
                 "Assisted",
                 false,
                 10.0,
-                50.0
+                50.0,
+                -8.0,
+                -6.0,
+                1.0,
+                5.0
         ));
         kieSession.insert(new RespiratorMode(
                 "KMV/AC",
                 "Assisted",
                 false,
                 0.0,
+                10.0,
+                -10.0,
+                -8.0,
+                5.0,
                 10.0
         ));
 

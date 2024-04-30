@@ -4,7 +4,7 @@ import com.ftn.sbnz.model.models.Certificate
 import com.ftn.sbnz.model.models.RespiratorMode
 
 
-query isModeAppropriate(String name, String group, Boolean patientConscious, Double participationPercentage)
+query isModeAppropriate(String name, String group, Boolean patientConscious, Double participationPercentage, Double deltaPO2, Double deltaPCO2)
     $rm: RespiratorMode(
         name,
         group,
@@ -12,16 +12,12 @@ query isModeAppropriate(String name, String group, Boolean patientConscious, Dou
     )
     eval(
             participationPercentage > $rm.getParticipationPercentageLB() &&
-            participationPercentage < $rm.getParticipationPercentageUB()
+            participationPercentage < $rm.getParticipationPercentageUB() &&
+            deltaPO2 > $rm.getpO2LB() &&
+            deltaPO2 < $rm.getpO2UB() &&
+            deltaPCO2 > $rm.getpCO2LB() &&
+            deltaPCO2 < $rm.getpCO2UB()
     )
-//    or
-//    ( RespiratorMode(
-//        z,
-//        group,
-//        patientConscious,
-//        participationPercentage > participationPercentageLB,
-//        participationPercentage < participationPercentageUB;)
-//      and isModeAppropriate( name, z, patientConscious, participationPercentage;) )
 end
 
 rule "Mode for patient"
@@ -44,7 +40,7 @@ end
 
 rule "find assisted mode"
     when
-        isModeAppropriate(mode, type, concious, 5.0;)
+        isModeAppropriate(mode, type, concious, 20.0, -7.0, 4.0;)
     then
         System.out.println(mode + " is " + type + " mode.");
 end
