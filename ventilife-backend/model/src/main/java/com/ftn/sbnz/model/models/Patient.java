@@ -8,6 +8,7 @@ public class Patient {
     private Boolean conscious;
     private Double pO2;
     private Double pCO2;
+    private Double participationPercentage;
     private Double tidalVolume;
     private Integer frequency;
     private Double minuteVolume;
@@ -26,6 +27,7 @@ public class Patient {
             Boolean conscious,
             Double pO2,
             Double pCO2,
+            Double participationPercentage,
             Double tidalVolume,
             Integer frequency,
             Double minuteVolume,
@@ -40,6 +42,7 @@ public class Patient {
         this.weight = weight;
         this.pO2 = pO2;
         this.pCO2 = pCO2;
+        this.participationPercentage = participationPercentage;
         this.tidalVolume = tidalVolume;
         this.frequency = frequency;
         this.minuteVolume = minuteVolume;
@@ -91,6 +94,14 @@ public class Patient {
 
     public void setPCO2(Double pCO2) {
         this.pCO2 = pCO2;
+    }
+
+    public Double getParticipationPercentage() {
+        return participationPercentage;
+    }
+
+    public void setParticipationPercentage(Double participationPercentage) {
+        this.participationPercentage = participationPercentage;
     }
 
     public Double getTidalVolume() {
@@ -166,6 +177,7 @@ public class Patient {
                 "\n conscious=" + conscious +
                 "\n pO2=" + pO2 +
                 "\n pCO2=" + pCO2 +
+                "\n participationPercentage=" + participationPercentage +
                 "\n tidalVolume=" + tidalVolume +
                 "\n frequency=" + frequency +
                 "\n minuteVolume=" + minuteVolume +
