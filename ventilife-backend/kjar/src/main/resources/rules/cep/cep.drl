@@ -1,20 +1,56 @@
 package cep;
 
-import com.ftn.sbnz.model.events.Notification
+import com.ftn.sbnz.model.events.PO2Change
+import com.ftn.sbnz.model.events.InhaleEvent
+import com.ftn.sbnz.model.models.Patient
 
-declare Delay
-    userId: Long
-end
-
-rule "Delay notification"
+rule "pO2 change"
+    no-loop
     when
-        Notification($id: userId)
-        Number(intValue >= 7) from accumulate(
-            Notification(userId == $id)
-            over window: time(1m), count(1)
-        )
-        not Delay(userId == $id)
+        $change: PO2Change(deltaPO2 < -2.5, $id: patientId)
+        $patient: Patient(id == $id, respiratorMode == "CPAP" || respiratorMode == "APRV" , FiO2 < 75)
     then
-        insert(new Delay($id));
-        System.out.println("Notification for user " + $id + " delayed.");
+        $patient.setFiO2($patient.getFiO2() + 10);
+        update($patient);
+        delete($change);
+        System.out.println("Patient FiO2 increased: " + $patient.getFiO2());
 end
+
+rule "spontaneus to assisted pO2 change"
+    when
+        $change: PO2Change(deltaPO2 < -2.5, $id: patientId)
+        $patient: Patient(id == $id, respiratorMode == "CPAP" || respiratorMode == "APRV" , FiO2 >= 75)
+    then
+        delete($change);
+        System.out.println("Patient FiO2 reached 75.");
+end
+
+// TODO: testirati
+rule "inhale event"
+    no-loop
+    when
+        $patient: Patient($id: id, respiratorMode == "CPAP" || respiratorMode == "APRV", FiO2 < 75)
+        Number(doubleValue < $patient.getMinuteVolume()) from accumulate(
+            $ie: InhaleEvent(patientId == $id)
+            over window: time(1m), sum($ie.getInhaledVolume())
+        )
+    then
+        $patient.setFiO2($patient.getFiO2() + 10);
+        update($patient);
+        System.out.println("Patient FiO2 increased: " + $patient.getFiO2());
+end
+
+rule "spontaneus to assisted inhale event"
+    no-loop
+    when
+        $patient: Patient($id: id, respiratorMode == "CPAP" || respiratorMode == "APRV", FiO2 >= 75)
+        Number(doubleValue < $patient.getMinuteVolume()) from accumulate(
+            $ie: InhaleEvent(patientId == $id)
+            over window: time(1m), sum($ie.getInhaledVolume())
+        )
+    then
+         System.out.println("Patient FiO2 reached 75.");
+end
+
+
+

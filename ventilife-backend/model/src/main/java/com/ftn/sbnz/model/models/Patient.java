@@ -17,6 +17,7 @@ public class Patient {
     private Double gasFlow;
     private Double compliance;
     private Double FiO2;
+    private String respiratorMode;
 
     public Patient() {
         this.id = UUID.randomUUID();
@@ -35,8 +36,10 @@ public class Patient {
             Double resistance,
             Double gasFlow,
             Double compliance,
-            Double fiO2
+            Double fiO2,
+            String respiratorMode
     ) {
+        this.respiratorMode = respiratorMode;
         this.id = UUID.randomUUID();
         this.conscious = conscious;
         this.weight = weight;
@@ -166,6 +169,14 @@ public class Patient {
 
     public void setFiO2(Double fiO2) {
         FiO2 = fiO2;
+    }
+
+    public String getRespiratorMode() {
+        return respiratorMode;
+    }
+
+    public void setRespiratorMode(String respiratorMode) {
+        this.respiratorMode = respiratorMode;
     }
 
     // endregion

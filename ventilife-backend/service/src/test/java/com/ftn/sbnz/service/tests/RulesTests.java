@@ -1,11 +1,14 @@
 package com.ftn.sbnz.service.tests;
 
+import com.ftn.sbnz.model.events.PO2Change;
 import com.ftn.sbnz.model.models.Patient;
 import com.ftn.sbnz.model.models.RespiratorDecision;
 import com.ftn.sbnz.model.models.RespiratorMode;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+
+import javax.swing.event.ChangeEvent;
 
 public class RulesTests {
 
@@ -105,6 +108,27 @@ public class RulesTests {
                 5.0,
                 10.0
         ));
+
+        kieSession.fireAllRules();
+    }
+
+    @org.junit.Test
+    public void testCEP1() {
+        KieServices ks = KieServices.Factory.get();
+        KieContainer kContainer = ks.getKieClasspathContainer();
+        KieSession kieSession = kContainer.newKieSession("cepKsession");
+
+        Patient patient = new Patient();
+        patient.setFiO2(25.0);
+        patient.setRespiratorMode("CPAP");
+
+        kieSession.insert(patient);
+        kieSession.insert(new PO2Change(patient.getId(), -2.6));
+        kieSession.insert(new PO2Change(patient.getId(), -2.6));
+        kieSession.insert(new PO2Change(patient.getId(), -2.6));
+        kieSession.insert(new PO2Change(patient.getId(), -2.6));
+        kieSession.insert(new PO2Change(patient.getId(), -2.6));
+        kieSession.insert(new PO2Change(patient.getId(), -2.6));
 
         kieSession.fireAllRules();
     }

@@ -4,7 +4,14 @@ import com.ftn.sbnz.model.models.Certificate
 import com.ftn.sbnz.model.models.RespiratorMode
 
 
-query isModeAppropriate(String name, String group, Boolean patientConscious, Double participationPercentage, Double deltaPO2, Double deltaPCO2)
+query isModeAppropriate(
+        String name,
+        String group,
+        Boolean patientConscious,
+        Double participationPercentage,
+        Double deltaPO2,
+        Double deltaPCO2
+    )
     $rm: RespiratorMode(
         name,
         group,
