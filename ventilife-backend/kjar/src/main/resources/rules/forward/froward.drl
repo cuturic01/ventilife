@@ -6,8 +6,7 @@ rule "Frequency decision"
         Patient($id: id, frequency > 35)
         $decision: RespiratorDecision(patientId == $id, frequencyDecision == false)
     then
-        $decision.setFrequencyDecision(true);
-        update($decision);
+        modify($decision){setFrequencyDecision(true)};
         System.out.println("Frequency: true");
 end
 
@@ -20,8 +19,7 @@ rule "Tidal volumen decision"
             tidalVolumeDecision == false
         )
     then
-        $decision.setTidalVolumeDecision(true);
-        update($decision);
+        modify($decision){setTidalVolumeDecision(true)};
         System.out.println("tidalVolume: true");
 end
 
@@ -35,8 +33,7 @@ rule "pCO2 decision"
             pCO2Decision == false
         )
     then
-        $decision.setPCO2Decision(true);
-        update($decision);
+        modify($decision){setPCO2Decision(true)};
         System.out.println("pCO2: true");
 end
 
@@ -51,8 +48,7 @@ rule "pO2 decision"
             pO2Decision == false
         )
     then
-        $decision.setPO2Decision(true);
-        update($decision);
+        modify($decision){setPO2Decision(true)};
         System.out.println("pO2: true");
 end
 

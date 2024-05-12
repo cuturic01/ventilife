@@ -8,8 +8,6 @@ import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 
-import javax.swing.event.ChangeEvent;
-
 public class RulesTests {
 
     @org.junit.Test
@@ -21,8 +19,8 @@ public class RulesTests {
         Patient patient = new Patient();
         patient.setFrequency(36);
         patient.setTidalVolume(4.0);
-        patient.setPCO2(8.9);
-        patient.setPO2(6.0);
+        patient.setpCO2(8.9);
+        patient.setpO2(6.0);
 
         RespiratorDecision respiratorDecision = new RespiratorDecision();
         respiratorDecision.setPatientId(patient.getId());

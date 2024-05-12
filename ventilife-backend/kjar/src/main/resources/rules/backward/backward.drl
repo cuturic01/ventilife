@@ -1,6 +1,5 @@
 package backward;
 
-import com.ftn.sbnz.model.models.Certificate
 import com.ftn.sbnz.model.models.RespiratorMode
 
 

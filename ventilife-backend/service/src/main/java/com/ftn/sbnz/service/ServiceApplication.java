@@ -2,6 +2,7 @@ package com.ftn.sbnz.service;
 
 import java.util.Arrays;
 
+import com.ftn.sbnz.service.util.Scenario;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.kie.api.KieServices;
@@ -16,18 +17,8 @@ import org.slf4j.LoggerFactory;
 @SpringBootApplication
 public class ServiceApplication  {
 	
-	private static Logger log = LoggerFactory.getLogger(ServiceApplication.class);
 	public static void main(String[] args) {
-		ApplicationContext ctx = SpringApplication.run(ServiceApplication.class, args);
-
-		String[] beanNames = ctx.getBeanDefinitionNames();
-		Arrays.sort(beanNames);
-
-		StringBuilder sb = new StringBuilder("Application beans:\n");
-		for (String beanName : beanNames) {
-			sb.append(beanName + "\n");
-		}
-		log.info(sb.toString());
+		SpringApplication.run(ServiceApplication.class, args);
 	}
 
 	@Bean
@@ -38,6 +29,11 @@ public class ServiceApplication  {
 		KieScanner kScanner = ks.newKieScanner(kContainer);
 		kScanner.start(1000);
 		return kContainer;
+	}
+
+	@Bean
+	public Scenario scenario() {
+        return new Scenario();
 	}
 	
 	/*

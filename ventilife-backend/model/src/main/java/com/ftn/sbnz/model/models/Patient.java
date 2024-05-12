@@ -83,19 +83,19 @@ public class Patient {
         this.weight = weight;
     }
 
-    public Double getPO2() {
+    public Double getpO2() {
         return pO2;
     }
 
-    public void setPO2(Double pO2) {
+    public void setpO2(Double pO2) {
         this.pO2 = pO2;
     }
 
-    public Double getPCO2() {
+    public Double getpCO2() {
         return pCO2;
     }
 
-    public void setPCO2(Double pCO2) {
+    public void setpCO2(Double pCO2) {
         this.pCO2 = pCO2;
     }
 
