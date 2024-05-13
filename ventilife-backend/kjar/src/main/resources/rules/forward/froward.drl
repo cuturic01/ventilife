@@ -12,7 +12,7 @@ end
 
 rule "Tidal volumen decision"
     when
-        Patient($id: id, tidalVolume < 5)
+        Patient($id: id, tidalVolume < 5 * weight)
         $decision: RespiratorDecision(
             patientId == $id,
             frequencyDecision == true,
