@@ -2,10 +2,7 @@ package com.ftn.sbnz.service.tests;
 
 import com.ftn.sbnz.model.events.ChangeEvent;
 import com.ftn.sbnz.model.events.PO2Change;
-import com.ftn.sbnz.model.models.ChangeRecord;
-import com.ftn.sbnz.model.models.Patient;
-import com.ftn.sbnz.model.models.RespiratorDecision;
-import com.ftn.sbnz.model.models.RespiratorMode;
+import com.ftn.sbnz.model.models.*;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
@@ -158,5 +155,25 @@ public class RulesTests {
         kieSession.insert(new PO2Change(patient.getId(), -2.6));
 
         kieSession.fireAllRules();
+    }
+
+    @org.junit.Test
+    public void testForward1() {
+        KieServices ks = KieServices.Factory.get();
+        KieContainer kContainer = ks.getKieClasspathContainer();
+        KieSession kieSession = kContainer.newKieSession("fwKsession");
+
+        Patient patient = new Patient();
+        patient.setCompliance(5.0);
+        patient.setWeight(100.0);
+        patient.setResistance(10.0);
+        kieSession.insert(patient);
+
+        StablePatientParams sp = new StablePatientParams();
+        sp.setPatientId(patient.getId());
+        kieSession.insert(sp);
+
+        kieSession.fireAllRules();
+
     }
 }
