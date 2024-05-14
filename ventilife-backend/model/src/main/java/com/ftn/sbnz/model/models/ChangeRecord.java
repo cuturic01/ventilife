@@ -8,6 +8,8 @@ public class ChangeRecord {
     private Double deltaPCO2;
     private Double participationPercentage;
 
+    private String chosenMode;
+
     public ChangeRecord() {}
 
     public ChangeRecord(UUID patientId, Double deltaPO2, Double deltaPCO2, Double deltaParticipationPercentage) {
@@ -57,5 +59,13 @@ public class ChangeRecord {
                 ", deltaPCO2=" + deltaPCO2 +
                 ", deltaParticipationPercentage=" + participationPercentage +
                 '}';
+    }
+
+    public String getChosenMode() {
+        return chosenMode;
+    }
+
+    public void setChosenMode(String chosenMode) {
+        this.chosenMode = chosenMode;
     }
 }

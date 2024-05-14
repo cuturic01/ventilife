@@ -2,13 +2,14 @@ package backward;
 
 import com.ftn.sbnz.model.models.RespiratorMode
 import com.ftn.sbnz.model.models.ChangeRecord
+import com.ftn.sbnz.model.models.Patient
 
 
 query isModeAppropriate(
         String name,
         String group,
         Boolean patientConscious,
-        Double deltaParticipationPercentage,
+        Double participationPercentage,
         Double deltaPO2,
         Double deltaPCO2
     )
@@ -17,36 +18,44 @@ query isModeAppropriate(
         group,
         patientConscious;
     )
-    // promenjen & -> || u 2. i 4. liniji evala
     eval(
-        deltaParticipationPercentage > $rm.getParticipationPercentageLB() &&
-        deltaParticipationPercentage < $rm.getParticipationPercentageUB() ||
+        participationPercentage > $rm.getParticipationPercentageLB() &&
+        participationPercentage < $rm.getParticipationPercentageUB() ||
         deltaPO2 > $rm.getpO2LB() && deltaPO2 < $rm.getpO2UB() ||
         deltaPCO2 > $rm.getpCO2LB() && deltaPCO2 < $rm.getpCO2UB()
     )
 end
 
-rule "Mode for patient"
+rule "find appropriate mode"
     when
+        $patient: Patient(FiO2 >= 75)
+        $changeRecord: ChangeRecord(patientId == $patient.getId())
+        isModeAppropriate(
+            mode,
+            type,
+            $patient.getConscious(),
+            $patient.getParticipationPercentage(),
+            $changeRecord.getDeltaPO2(),
+            $changeRecord.getDeltaPCO2()
+            ;
+        )
     then
+        System.out.println("Recommended mode is: " + mode + " (" + type + ").");
 end
 
-rule "Recommended mode for patient"
+rule "check chosen mode"
     when
+        $patient: Patient(FiO2 >= 75)
+        $changeRecord: ChangeRecord(patientId == $patient.getId())
+        isModeAppropriate(
+            $changeRecord.getChosenMode(),
+            type,
+            $patient.getConscious(),
+            $patient.getParticipationPercentage(),
+            $changeRecord.getDeltaPO2(),
+            $changeRecord.getDeltaPCO2()
+            ;
+        )
     then
-end
-
-rule "find mode"
-    when
-        RespiratorMode($sName:name, group == "Mode")
-        RespiratorMode(this != $sName, group == $sName, $sSubmode:name)
-    then
-        System.out.println("UNIMPORTANT: " + $sSubmode + " is mode of " + $sName);
-end
-
-rule "find assisted mode"
-    when
-        isModeAppropriate(mode, type, false, 60.0, -7.0, 7.0;)
-    then
-        System.out.println(mode + " is " + type + " mode.");
+        System.out.println("Chosen mode is appropriate.");
 end
