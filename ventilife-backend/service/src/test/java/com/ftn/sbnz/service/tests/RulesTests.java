@@ -3,14 +3,15 @@ package com.ftn.sbnz.service.tests;
 import com.ftn.sbnz.model.events.ChangeEvent;
 import com.ftn.sbnz.model.events.PO2Change;
 import com.ftn.sbnz.model.models.*;
+import org.junit.Test;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 
 public class RulesTests {
 
-    @org.junit.Test
-    public void testForward() {
+    @Test
+    public void testRespiratorDecision() {
         KieServices ks = KieServices.Factory.get();
         KieContainer kContainer = ks.getKieClasspathContainer();
         KieSession kieSession = kContainer.newKieSession("fwKsession");
@@ -31,7 +32,27 @@ public class RulesTests {
         System.out.println(respiratorDecision);
     }
 
-    @org.junit.Test
+    @Test
+    public void testNormalParams() {
+        KieServices ks = KieServices.Factory.get();
+        KieContainer kContainer = ks.getKieClasspathContainer();
+        KieSession kieSession = kContainer.newKieSession("fwKsession");
+
+        Patient patient = new Patient();
+        patient.setCompliance(5.0);
+        patient.setWeight(100.0);
+        patient.setResistance(10.0);
+        kieSession.insert(patient);
+
+        StablePatientParams sp = new StablePatientParams();
+        sp.setPatientId(patient.getId());
+        kieSession.insert(sp);
+
+        kieSession.fireAllRules();
+
+    }
+
+    @Test
     public void testBackward() {
         KieServices ks = KieServices.Factory.get();
         KieContainer kContainer = ks.getKieClasspathContainer();
@@ -109,8 +130,8 @@ public class RulesTests {
         kieSession.fireAllRules();
     }
 
-    @org.junit.Test
-    public void testCEP2() {
+    @Test
+    public void testCEP() {
         KieServices ks = KieServices.Factory.get();
         KieContainer kContainer = ks.getKieClasspathContainer();
         KieSession kieSessionCep = kContainer.newKieSession("cepKsession");
@@ -212,44 +233,5 @@ public class RulesTests {
 
     }
 
-    @org.junit.Test
-    public void testCEP1() {
-        KieServices ks = KieServices.Factory.get();
-        KieContainer kContainer = ks.getKieClasspathContainer();
-        KieSession kieSession = kContainer.newKieSession("cepKsession");
 
-        Patient patient = new Patient();
-        patient.setFiO2(25.0);
-        patient.setRespiratorMode("CPAP");
-
-        kieSession.insert(patient);
-        kieSession.insert(new PO2Change(patient.getId(), -2.6));
-        kieSession.insert(new PO2Change(patient.getId(), -2.6));
-        kieSession.insert(new PO2Change(patient.getId(), -2.6));
-        kieSession.insert(new PO2Change(patient.getId(), -2.6));
-        kieSession.insert(new PO2Change(patient.getId(), -2.6));
-        kieSession.insert(new PO2Change(patient.getId(), -2.6));
-
-        kieSession.fireAllRules();
-    }
-
-    @org.junit.Test
-    public void testForward1() {
-        KieServices ks = KieServices.Factory.get();
-        KieContainer kContainer = ks.getKieClasspathContainer();
-        KieSession kieSession = kContainer.newKieSession("fwKsession");
-
-        Patient patient = new Patient();
-        patient.setCompliance(5.0);
-        patient.setWeight(100.0);
-        patient.setResistance(10.0);
-        kieSession.insert(patient);
-
-        StablePatientParams sp = new StablePatientParams();
-        sp.setPatientId(patient.getId());
-        kieSession.insert(sp);
-
-        kieSession.fireAllRules();
-
-    }
 }
