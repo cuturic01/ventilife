@@ -12,7 +12,7 @@ rule "change event"
         $patient: Patient($id: id, respiratorMode == "CPAP" || respiratorMode == "APRV" , FiO2 < 75)
         $record: ChangeRecord(patientId == $id)
         $change: ChangeEvent(
-            $id == patientId,
+            $id == patientId, // ovde templejti
             deltaPO2 <= -1.5 ||
             deltaPCO2 >= 0.5 ||
             deltaParticipationPercentage >= 25
@@ -39,7 +39,7 @@ rule "change event cap"
         $patient: Patient($id: id, respiratorMode == "CPAP" || respiratorMode == "APRV" , FiO2 >= 75)
         $record: ChangeRecord(patientId == $id)
         $change: ChangeEvent(
-            $id == patientId,
+            $id == patientId, // ovde templejti
             deltaPO2 <= -1.5 ||
             deltaPCO2 >= 0.5 ||
             deltaParticipationPercentage >= 25

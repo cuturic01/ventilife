@@ -5,6 +5,9 @@ import com.ftn.sbnz.model.models.ChangeRecord
 import com.ftn.sbnz.model.models.Patient
 
 
+// doadati query koji ce pronaci pacijenta sa najboljim i najgorim promenama u poslednja 24h
+
+
 query isModeAppropriate(
         String name,
         String group,
@@ -48,7 +51,7 @@ rule "check chosen mode"
         $patient: Patient(FiO2 >= 75)
         $changeRecord: ChangeRecord(patientId == $patient.getId())
         isModeAppropriate(
-            $changeRecord.getChosenMode(),
+            $changeRecord.getChosenMode(), // ovde templejte
             type,
             $patient.getConscious(),
             $patient.getParticipationPercentage(),
