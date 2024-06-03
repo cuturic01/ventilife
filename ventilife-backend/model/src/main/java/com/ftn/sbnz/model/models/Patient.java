@@ -17,6 +17,7 @@ public class Patient {
     private Double gasFlow;
     private Double compliance;
     private Double FiO2;
+    private String respiratorMode;
 
     public Patient() {
         this.id = UUID.randomUUID();
@@ -35,8 +36,10 @@ public class Patient {
             Double resistance,
             Double gasFlow,
             Double compliance,
-            Double fiO2
+            Double fiO2,
+            String respiratorMode
     ) {
+        this.respiratorMode = respiratorMode;
         this.id = UUID.randomUUID();
         this.conscious = conscious;
         this.weight = weight;
@@ -80,19 +83,19 @@ public class Patient {
         this.weight = weight;
     }
 
-    public Double getPO2() {
+    public Double getpO2() {
         return pO2;
     }
 
-    public void setPO2(Double pO2) {
+    public void setpO2(Double pO2) {
         this.pO2 = pO2;
     }
 
-    public Double getPCO2() {
+    public Double getpCO2() {
         return pCO2;
     }
 
-    public void setPCO2(Double pCO2) {
+    public void setpCO2(Double pCO2) {
         this.pCO2 = pCO2;
     }
 
@@ -166,6 +169,14 @@ public class Patient {
 
     public void setFiO2(Double fiO2) {
         FiO2 = fiO2;
+    }
+
+    public String getRespiratorMode() {
+        return respiratorMode;
+    }
+
+    public void setRespiratorMode(String respiratorMode) {
+        this.respiratorMode = respiratorMode;
     }
 
     // endregion
