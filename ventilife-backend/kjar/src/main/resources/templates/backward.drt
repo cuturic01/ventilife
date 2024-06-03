@@ -1,0 +1,67 @@
+template header
+chosenMode
+deltaPO2
+deltaPCO2
+
+package templates;
+
+import com.ftn.sbnz.model.models.RespiratorMode;
+import com.ftn.sbnz.model.models.ChangeRecord;
+import com.ftn.sbnz.model.models.Patient;
+
+query isModeAppropriate(
+        String name,
+        String group,
+        Boolean patientConscious,
+        Double participationPercentage,
+        Double deltaPO2,
+        Double deltaPCO2
+    )
+    $rm: RespiratorMode(
+        name,
+        group,
+        patientConscious;
+    )
+    eval(
+        participationPercentage > $rm.getParticipationPercentageLB() &&
+        participationPercentage < $rm.getParticipationPercentageUB() ||
+        deltaPO2 > $rm.getpO2LB() && deltaPO2 < $rm.getpO2UB() ||
+        deltaPCO2 > $rm.getpCO2LB() && deltaPCO2 < $rm.getpCO2UB()
+    )
+end
+
+template "backward-rules"
+
+rule "find appropriate mode"
+    when
+        $patient: Patient(FiO2 >= 75)
+        isModeAppropriate(
+            mode,
+            type,
+            $patient.getConscious(),
+            $patient.getParticipationPercentage(),
+            @{deltaPO2},
+            @{deltaPCO2}
+            ;
+        )
+    then
+        System.out.println("Recommended mode is: " + mode + " (" + type + ").");
+end
+
+rule "check chosen mode"
+    when
+        $patient: Patient(FiO2 >= 75)
+        isModeAppropriate(
+            @{chosenMode},
+            type,
+            $patient.getConscious(),
+            $patient.getParticipationPercentage(),
+            @{deltaPO2},
+            @{deltaPCO2}
+            ;
+        )
+    then
+        System.out.println("Chosen mode is appropriate.");
+end
+
+end template
