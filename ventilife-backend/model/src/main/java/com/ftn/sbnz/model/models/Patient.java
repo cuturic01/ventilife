@@ -18,6 +18,7 @@ public class Patient {
     private Double compliance;
     private Double FiO2;
     private String respiratorMode;
+    private Boolean volumeControlled;
 
     public Patient() {
         this.id = UUID.randomUUID();
@@ -37,9 +38,11 @@ public class Patient {
             Double gasFlow,
             Double compliance,
             Double fiO2,
-            String respiratorMode
+            String respiratorMode,
+            Boolean volumeControlled
     ) {
         this.respiratorMode = respiratorMode;
+        this.volumeControlled = volumeControlled;
         this.id = UUID.randomUUID();
         this.conscious = conscious;
         this.weight = weight;
@@ -177,6 +180,14 @@ public class Patient {
 
     public void setRespiratorMode(String respiratorMode) {
         this.respiratorMode = respiratorMode;
+    }
+
+    public Boolean getVolumeControlled() {
+        return volumeControlled;
+    }
+
+    public void setVolumeControlled(Boolean volumeControlled) {
+        this.volumeControlled = volumeControlled;
     }
 
     // endregion

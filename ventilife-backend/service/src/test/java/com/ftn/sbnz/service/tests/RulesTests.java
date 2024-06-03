@@ -1,6 +1,7 @@
 package com.ftn.sbnz.service.tests;
 
 import com.ftn.sbnz.model.events.ChangeEvent;
+import com.ftn.sbnz.model.events.InhaleEvent;
 import com.ftn.sbnz.model.events.PO2Change;
 import com.ftn.sbnz.model.models.*;
 import org.drools.template.ObjectDataCompiler;
@@ -216,12 +217,17 @@ public class RulesTests {
 
         Patient patient = new Patient();
         patient.setFiO2(25.0);
-        patient.setRespiratorMode("CPAP");
+        patient.setRespiratorMode("SIMV");
         patient.setMinuteVolume(500.0 * 6);
         patient.setpCO2(5.0);
         patient.setpO2(10.0);
-        patient.setParticipationPercentage(100.0);
-        patient.setConscious(true);
+        patient.setParticipationPercentage(30.0);
+        patient.setConscious(false);
+        patient.setVolumeControlled(true);
+        patient.setCompliance(4.0);
+        patient.setGasFlow(6.0);
+        patient.setResistance(0.245);
+        patient.setWeight(95.0);
         kieSessionCep.insert(patient);
 
         ChangeRecord changeRecord = new ChangeRecord(patient.getId(), 0.0, 0.0, 0.0);
@@ -230,6 +236,9 @@ public class RulesTests {
         kieSessionCep.insert(new ChangeEvent(patient.getId(), -1.5, 0.5, 25.0));
         kieSessionCep.insert(new ChangeEvent(patient.getId(), -1.5, 0.5, 25.0));
         kieSessionCep.insert(new ChangeEvent(patient.getId(), -1.5, 0.5, 25.0));
+        kieSessionCep.insert(new ChangeEvent(patient.getId(), -1.5, 0.5, 25.0));
+
+        kieSessionCep.insert(new InhaleEvent(patient.getId(), 500.0 * 7));
 
         kieSessionCep.fireAllRules();
         System.out.println(changeRecord);
@@ -371,6 +380,11 @@ public class RulesTests {
         }
 
         return kieHelper.build().newKieSession();
+    }
+
+    @Test
+    public void TestCepSimv() {
+
     }
 
 }
