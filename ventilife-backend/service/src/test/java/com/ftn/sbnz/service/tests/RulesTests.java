@@ -383,8 +383,122 @@ public class RulesTests {
     }
 
     @Test
-    public void TestCepSimv() {
+    public void testCepTemplate() {
+        KieServices ks = KieServices.Factory.get();
+        KieContainer kContainer = ks.getKieClasspathContainer();
+        KieSession kieSessionBackward = kContainer.newKieSession("bwKsession");
+        kieSessionBackward.insert(new RespiratorMode(
+                "Spontaneous",
+                "Mode",
+                true,
+                50.0,
+                100.0,
+                -6.0,
+                -1.0,
+                0.0,
+                1.0
 
+        ));
+        kieSessionBackward.insert(new RespiratorMode(
+                "CPAP",
+                "Spontaneous",
+                true,
+                85.0,
+                100.0,
+                -4.0,
+                -1.0,
+                0.0,
+                1.0
+        ));
+        kieSessionBackward.insert(new RespiratorMode(
+                "APRV",
+                "Spontaneous",
+                true,
+                50.0,
+                85.0,
+                -6.0,
+                -4.0,
+                0.0,
+                1.0
+        ));
+
+        kieSessionBackward.insert(new RespiratorMode(
+                "Assisted",
+                "Mode",
+                false,
+                0.0,
+                50.0,
+                -10.0,
+                -6.0,
+                1.0,
+                10.0
+        ));
+        kieSessionBackward.insert(new RespiratorMode(
+                "SIMV",
+                "Assisted",
+                false,
+                10.0,
+                50.0,
+                -8.0,
+                -6.0,
+                1.0,
+                5.0
+        ));
+        kieSessionBackward.insert(new RespiratorMode(
+                "KMV/AC",
+                "Assisted",
+                false,
+                0.0,
+                10.0,
+                -10.0,
+                -8.0,
+                5.0,
+                10.0
+        ));
+
+        Patient patient = new Patient();
+        patient.setFiO2(25.0);
+        patient.setRespiratorMode("SIMV");
+        patient.setMinuteVolume(500.0 * 6);
+        patient.setpCO2(5.0);
+        patient.setpO2(10.0);
+        patient.setParticipationPercentage(30.0);
+        patient.setConscious(false);
+        patient.setVolumeControlled(true);
+        patient.setCompliance(4.0);
+        patient.setGasFlow(6.0);
+        patient.setResistance(0.245);
+        patient.setWeight(95.0);
+
+        InputStream template = RulesTests.class.getResourceAsStream("/templates/cep.drt");
+        List<Thresholds> data = new ArrayList<>();
+        data.add(new Thresholds(-1.5, 0.5, 25.0));
+
+        ObjectDataCompiler converter = new ObjectDataCompiler();
+        String drl = converter.compile(data, template);
+
+        KieSession kieSessionCep = createKieSessionFromDRL(drl);
+
+        kieSessionCep.insert(patient);
+
+        ChangeRecord changeRecord = new ChangeRecord(patient.getId(), 0.0, 0.0, 0.0);
+        kieSessionCep.insert(changeRecord);
+
+        kieSessionCep.insert(new ChangeEvent(patient.getId(), -1.5, 0.5, 25.0));
+        kieSessionCep.insert(new ChangeEvent(patient.getId(), -1.5, 0.5, 25.0));
+        kieSessionCep.insert(new ChangeEvent(patient.getId(), -1.5, 0.5, 25.0));
+        kieSessionCep.insert(new ChangeEvent(patient.getId(), -1.5, 0.5, 25.0));
+
+        kieSessionCep.insert(new InhaleEvent(patient.getId(), 500.0 * 7));
+
+        kieSessionCep.fireAllRules();
+        System.out.println(changeRecord);
+        changeRecord.setChosenMode("APRV");
+
+        kieSessionBackward.insert(patient);
+        kieSessionBackward.insert(changeRecord);
+
+        kieSessionBackward.fireAllRules();
     }
 
 }
