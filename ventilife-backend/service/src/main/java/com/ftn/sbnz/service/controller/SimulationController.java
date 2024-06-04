@@ -43,4 +43,10 @@ public class SimulationController {
 		return ResponseEntity.ok(patient);
 	}
 
+	@GetMapping(value = "/change-mode/{patientId}/{mode}")
+	public ResponseEntity<ResponseMessage> changeMode(@PathVariable String patientId, @PathVariable String mode) {
+		return ResponseEntity.ok(simulationService.changeMode(patientId, mode));
+	}
+
+
 }

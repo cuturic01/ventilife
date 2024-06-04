@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftn.sbnz.model.events.ChangeEvent;
 import com.ftn.sbnz.model.models.*;
+import com.ftn.sbnz.service.util.ResponseMessage;
 import com.ftn.sbnz.service.util.Scenario;
 import org.drools.template.ObjectDataCompiler;
 import org.kie.api.builder.Message;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-
+// TODO: Popraviti brojeve da se sve lepse uklapa
 @Service
 public class SimulationService {
 
@@ -95,6 +96,8 @@ public class SimulationService {
 			patient.setRespiratorMode("CPAP");
 	}
 
+	// TODO: kad pacijenta uspavati
+	// TODO: dodati pravila za poboljsanje stanja pacijenta
 	public Patient getWorse(String name) throws JsonProcessingException {
 		String url = "http://localhost:5000/get-worse/" + name;
 		RestTemplate restTemplate = new RestTemplate();
@@ -118,6 +121,23 @@ public class SimulationService {
 		backwardKieSession.fireAllRules();
 
 		return patient;
+	}
+
+	// TODO: dodati pravila za slucaj kad se odabrani i preporuceni mod ne poklapaju i ubaciti response message u sesiju
+	public ResponseMessage changeMode(String patientId, String mode) {
+		Patient patient = patients
+				.stream()
+				.filter(p -> Objects.equals(p.getId().toString(), patientId))
+				.findAny()
+				.orElse(null);
+		ChangeRecord changeRecord = changeRecords
+				.stream().filter(cr -> Objects.equals(cr.getPatientId().toString(), patientId))
+				.findAny()
+				.orElse(null);
+		changeRecord.setChosenMode(mode);
+		KieSession kieSession = createBackwardKieSession(patient, changeRecord);
+		kieSession.fireAllRules();
+		return new ResponseMessage("Radi.");
 	}
 
 	private KieSession createCepKieSession(Patient patient, ChangeRecord changeRecord, ChangeEvent changeEvent) {
