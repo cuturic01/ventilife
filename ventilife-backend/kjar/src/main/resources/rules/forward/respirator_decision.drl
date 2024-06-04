@@ -54,7 +54,7 @@ end
 
 rule "Final decision"
     when
-        Patient($id: id)
+        Patient($id: id, $name: name)
         $decision: RespiratorDecision(
             patientId == $id,
             frequencyDecision == true,
@@ -64,6 +64,6 @@ rule "Final decision"
         )
     then
         $decision.setFinalDecision(true);
-        System.out.println("Patient " + $id + " must be put on the respirator!");
+        System.out.println("Patient " + $name + " must be put on the respirator!");
 end
 

@@ -1,5 +1,6 @@
 package com.ftn.sbnz.service.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ftn.sbnz.model.models.Patient;
 import com.ftn.sbnz.model.models.RespiratorDecision;
 import com.ftn.sbnz.service.service.SimulationService;
@@ -14,12 +15,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/simulation")
 public class SimulationController {
 	private final SimulationService simulationService;
-	private final Scenario scenario;
 
 	@Autowired
-	public SimulationController(SimulationService simulationService, Scenario scenario) {
+	public SimulationController(SimulationService simulationService) {
 		this.simulationService = simulationService;
-		this.scenario = scenario;
 	}
 
 	@GetMapping(value="/respirator-decision")
@@ -27,27 +26,15 @@ public class SimulationController {
 		return ResponseEntity.ok(simulationService.getRespiratorDecision(patient));
 	}
 
-	@GetMapping(value="/start-simulation")
-	public ResponseEntity<ResponseMessage> startSimulation()  {
-		try {
-			simulationService.simulate();
-			return ResponseEntity.ok(new ResponseMessage("Simulation started."));
-		} catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-			return ResponseEntity.ok(new ResponseMessage(e.getMessage()));
-		}
-    }
-
-	@PostMapping(value = "/set-scenario")
-	public ResponseEntity<ResponseMessage> setScenario(@RequestBody Scenario scenario) {
-		this.scenario.setScenario(scenario.getScenario());
-		return ResponseEntity.ok(new ResponseMessage("Scenario set."));
-	}
-
 	@GetMapping(value="/pO2-change")
 	public ResponseEntity<ResponseMessage> pO2Change() {
 		return ResponseEntity.ok(new ResponseMessage("Scenario set."));
+	}
+
+	@GetMapping(value = "/add-patient/{name}")
+	public ResponseEntity<ResponseMessage> addPera(@PathVariable String name) throws JsonProcessingException {
+		simulationService.addPatient(name);
+		return ResponseEntity.ok(new ResponseMessage(name + " added."));
 	}
 
 }

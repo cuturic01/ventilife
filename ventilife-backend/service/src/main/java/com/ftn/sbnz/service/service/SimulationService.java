@@ -1,13 +1,20 @@
 package com.ftn.sbnz.service.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftn.sbnz.model.models.Patient;
 import com.ftn.sbnz.model.models.RespiratorDecision;
+import com.ftn.sbnz.model.models.StablePatientParams;
 import com.ftn.sbnz.service.util.Scenario;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Objects;
 
 
@@ -15,46 +22,64 @@ import java.util.Objects;
 public class SimulationService {
 
 	private final KieContainer kieContainer;
-	private final Scenario scenario;
-	private Patient patient;
+	private List<Patient> patients;
+	private List<StablePatientParams> stablePatientParamsList;
+	private ObjectMapper objectMapper;
 
 	@Autowired
-	public SimulationService(KieContainer kieContainer, Scenario scenario) {
+	public SimulationService(
+			KieContainer kieContainer,
+			List<Patient> patients,
+			ObjectMapper objectMapper,
+			List<StablePatientParams> stablePatientParamsList
+			) {
 		this.kieContainer = kieContainer;
-		this.scenario = scenario;
+		this.patients = patients;
+		this.objectMapper = objectMapper;
+		this.stablePatientParamsList = stablePatientParamsList;
 	}
 
 	public RespiratorDecision getRespiratorDecision(Patient patient) {
-		this.patient = patient;
 		KieSession kieSession = kieContainer.newKieSession("fwKsession");
 
 		RespiratorDecision respiratorDecision = new RespiratorDecision();
-		respiratorDecision.setPatientId(this.patient.getId());
-		kieSession.insert(this.patient);
+		respiratorDecision.setPatientId(patient.getId());
+		kieSession.insert(patient);
 		kieSession.insert(respiratorDecision);
 		kieSession.fireAllRules();
 
 		return respiratorDecision;
 	}
 
-	public void simulate() throws Exception {
-		if (this.patient == null)
-			throw new Exception("No patient information.");
-		this.scenario.setScenario("simulating");
+	public StablePatientParams getStablePatientParams(Patient patient) {
+		KieSession kieSession = kieContainer.newKieSession("fwKsession");
 
-		while(true) {
-			if (Objects.equals(scenario.getScenario(), "simulating")) {
-				Thread.sleep((long) 100.0);
-			} else if (Objects.equals(scenario.getScenario(), "stop")) {
-				scenario.setScenario("");
-				return;
-			} else if (Objects.equals(scenario.getScenario(), "pO2Change")) {
-				System.out.println("pO2Change");
-			}
-		}
+		StablePatientParams stablePatientParams = new StablePatientParams();
+		stablePatientParams.setPatientId(patient.getId());
+		kieSession.insert(patient);
+		kieSession.insert(stablePatientParams);
+		kieSession.fireAllRules();
+
+		return stablePatientParams;
 	}
 
-	public void pO2Change() {
-
+	public void addPatient(String name) throws JsonProcessingException {
+		String url = "http://localhost:5000/";
+		RestTemplate restTemplate = new RestTemplate();
+		String response = "";
+		if (Objects.equals(name, "pera")) {
+			response = restTemplate.getForObject(url + "pera-data", String.class);
+		} else if (Objects.equals(name, "jovan")) {
+			response = restTemplate.getForObject(url + "jovan-data", String.class);
+		} else if (Objects.equals(name, "marko")) {
+			response = restTemplate.getForObject(url + "marko-data", String.class);
+		}
+		System.out.println("Response: " + response);
+		Patient patient = objectMapper.readValue(response, Patient.class);
+		patient.setFiO2(30.0);
+		System.out.println(patient);
+		patients.add(patient);
+		stablePatientParamsList.add(getStablePatientParams(patient));
+		getRespiratorDecision(patient);
 	}
 }
