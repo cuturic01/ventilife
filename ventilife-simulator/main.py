@@ -97,5 +97,21 @@ def get_worse(name):
     return jsonify(change_event)
 
 
+@app.route('/inhale-event/<name>')
+def inhale_evevent(name):
+    patient_id = ""
+    if name == "pera":
+        patient_id = pera_id
+    elif name == "jovan":
+        patient_id = jovan_id
+    elif name == "marko":
+        patient_id = marko_id
+    inhalation_event = {
+        "patientId": patient_id,
+        "inhaledVolume": 500
+    }
+    return jsonify(inhalation_event)
+
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=False)

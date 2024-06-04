@@ -48,5 +48,10 @@ public class SimulationController {
 		return ResponseEntity.ok(simulationService.changeMode(patientId, mode));
 	}
 
+	@GetMapping(value = "/bad-inhalation/{name}")
+	public ResponseEntity<ResponseMessage> badInhalation(@PathVariable String name) throws JsonProcessingException {
+		simulationService.badInhalation(name);
+		return ResponseEntity.ok(new ResponseMessage("Bad inhalation."));
+	}
 
 }

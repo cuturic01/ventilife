@@ -3,10 +3,11 @@ package com.ftn.sbnz.service.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftn.sbnz.model.events.ChangeEvent;
+import com.ftn.sbnz.model.events.InhaleEvent;
 import com.ftn.sbnz.model.models.*;
 import com.ftn.sbnz.service.util.ResponseMessage;
-import com.ftn.sbnz.service.util.Scenario;
 import org.drools.template.ObjectDataCompiler;
+import org.kie.api.KieServices;
 import org.kie.api.builder.Message;
 import org.kie.api.builder.Results;
 import org.kie.api.io.ResourceType;
@@ -14,8 +15,6 @@ import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.internal.utils.KieHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -96,7 +95,7 @@ public class SimulationService {
 			patient.setRespiratorMode("CPAP");
 	}
 
-	// TODO: kad pacijenta uspavati
+	// TODO: kad pacijenta uspavati?
 	// TODO: dodati pravila za poboljsanje stanja pacijenta
 	public Patient getWorse(String name) throws JsonProcessingException {
 		String url = "http://localhost:5000/get-worse/" + name;
@@ -115,7 +114,7 @@ public class SimulationService {
 				.orElse(null);
 		System.out.println(patient);
 
-		KieSession cepKieSession = createCepKieSession(patient, changeRecord, changeEvent);
+		KieSession cepKieSession = createCepChangeKieSession(patient, changeRecord, changeEvent);
 		cepKieSession.fireAllRules();
 		KieSession backwardKieSession = createBackwardKieSession(patient, changeRecord);
 		backwardKieSession.fireAllRules();
@@ -124,6 +123,8 @@ public class SimulationService {
 	}
 
 	// TODO: dodati pravila za slucaj kad se odabrani i preporuceni mod ne poklapaju i ubaciti response message u sesiju
+	// TODO: momenat prebacivanja moda treba da ima potvrdu
+	// TODO: Kad se mod prebaci resetovati FiO2 na 25%
 	public ResponseMessage changeMode(String patientId, String mode) {
 		Patient patient = patients
 				.stream()
@@ -140,7 +141,21 @@ public class SimulationService {
 		return new ResponseMessage("Radi.");
 	}
 
-	private KieSession createCepKieSession(Patient patient, ChangeRecord changeRecord, ChangeEvent changeEvent) {
+	public void badInhalation(String name) throws JsonProcessingException {
+		String url = "http://localhost:5000/inhale-event/" + name;
+		RestTemplate restTemplate = new RestTemplate();
+		String response = restTemplate.getForObject(url, String.class);
+		InhaleEvent inhaleEvent = objectMapper.readValue(response, InhaleEvent.class);
+		Patient patient = patients
+				.stream()
+				.filter(p -> Objects.equals(p.getId().toString(), inhaleEvent.getPatientId().toString()))
+				.findAny()
+				.orElse(null);
+		KieSession kieSession = createCepInhalationKieSession(patient, inhaleEvent);
+		kieSession.fireAllRules();
+	}
+
+	private KieSession createCepChangeKieSession(Patient patient, ChangeRecord changeRecord, ChangeEvent changeEvent) {
 		InputStream template = SimulationService.class.getResourceAsStream("/templates/cep.drt");
 		List<Thresholds> data = new ArrayList<>();
 		data.add(new Thresholds(-1.5, 0.5, 25.0));
@@ -153,6 +168,15 @@ public class SimulationService {
 		kieSession.insert(changeRecord);
 		kieSession.insert(changeEvent);
 		return kieSession;
+	}
+
+	private KieSession createCepInhalationKieSession(Patient patient, InhaleEvent inhaleEvent) {
+		KieServices ks = KieServices.Factory.get();
+		KieContainer kContainer = ks.getKieClasspathContainer();
+		KieSession kieSessionCep = kContainer.newKieSession("cepKsession");
+		kieSessionCep.insert(patient);
+		kieSessionCep.insert(inhaleEvent);
+		return kieSessionCep;
 	}
 
 	private KieSession createBackwardKieSession(Patient patient, ChangeRecord changeRecord) {
