@@ -10,6 +10,14 @@ public class ChangeRecord {
 
     private String chosenMode;
 
+    public ChangeRecord(UUID patientId, Double deltaPO2, Double deltaPCO2, Double participationPercentage, String chosenMode) {
+        this.patientId = patientId;
+        this.deltaPO2 = deltaPO2;
+        this.deltaPCO2 = deltaPCO2;
+        this.participationPercentage = participationPercentage;
+        this.chosenMode = chosenMode;
+    }
+
     public ChangeRecord() {}
 
     public ChangeRecord(UUID patientId, Double deltaPO2, Double deltaPCO2, Double deltaParticipationPercentage) {

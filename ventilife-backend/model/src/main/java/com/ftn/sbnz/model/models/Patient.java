@@ -204,6 +204,7 @@ public class Patient {
     @Override
     public String toString() {
         return "Patient{" +
+                "\n id=" + id +
                 "\n name=" + name +
                 "\n weight=" + weight +
                 "\n conscious=" + conscious +

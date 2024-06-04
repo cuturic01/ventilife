@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.ftn.sbnz.model.models.ChangeRecord;
 import com.ftn.sbnz.model.models.Patient;
 import com.ftn.sbnz.model.models.StablePatientParams;
 import com.ftn.sbnz.service.util.Scenario;
@@ -47,6 +48,11 @@ public class ServiceApplication  {
 
 	@Bean
 	public List<StablePatientParams> stablePatientParams() {
+		return new ArrayList<>();
+	}
+
+	@Bean
+	public List<ChangeRecord> changeRecords() {
 		return new ArrayList<>();
 	}
 	

@@ -32,9 +32,15 @@ public class SimulationController {
 	}
 
 	@GetMapping(value = "/add-patient/{name}")
-	public ResponseEntity<ResponseMessage> addPera(@PathVariable String name) throws JsonProcessingException {
+	public ResponseEntity<ResponseMessage> addPatient(@PathVariable String name) throws JsonProcessingException {
 		simulationService.addPatient(name);
 		return ResponseEntity.ok(new ResponseMessage(name + " added."));
+	}
+
+	@GetMapping(value = "/get-worse/{name}")
+	public ResponseEntity<Patient> getWorse(@PathVariable String name) throws JsonProcessingException {
+		Patient patient = simulationService.getWorse(name);
+		return ResponseEntity.ok(patient);
 	}
 
 }

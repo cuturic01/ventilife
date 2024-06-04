@@ -2,11 +2,15 @@ from flask import Flask, jsonify
 
 app = Flask(__name__)
 
+pera_id = "6f6a3a43-1d28-4c54-84d9-912b6d893c98"
+jovan_id = "7f7a3a43-1d28-4c54-84d9-912b6d893c98"
+marko_id = "8f8a3a43-1d28-4c54-84d9-912b6d893c98"
+
 
 @app.route('/pera-data', methods=['GET'])
 def pera_data():
     pera = {
-        "id": "6f6a3a43-1d28-4c54-84d9-912b6d893c98",
+        "id": pera_id,
         "name": "Pera Peric",
         "weight": 100,
         "conscious": True,
@@ -30,7 +34,7 @@ def pera_data():
 @app.route('/jovan-data', methods=['GET'])
 def jovan_data():
     jovan = {
-        "id": "7f7a3a43-1d28-4c54-84d9-912b6d893c98",
+        "id": jovan_id,
         "name": "Jovan Jovic",
         "weight": 95,
         "conscious": True,
@@ -54,7 +58,7 @@ def jovan_data():
 @app.route('/marko-data', methods=['GET'])
 def marko_data():
     marko = {
-        "id": "8f8a3a43-1d28-4c54-84d9-912b6d893c98",
+        "id": marko_id,
         "name": "Marko Markovic",
         "weight": 90,
         "conscious": True,
@@ -73,6 +77,24 @@ def marko_data():
         "volumeControlled": True
     }
     return jsonify(marko)
+
+
+@app.route('/get-worse/<name>')
+def get_worse(name):
+    patient_id = ""
+    if name == "pera":
+        patient_id = pera_id
+    elif name == "jovan":
+        patient_id = jovan_id
+    elif name == "marko":
+        patient_id = marko_id
+    change_event = {
+        "patientId": patient_id,
+        "deltaPO2": -1.5,
+        "deltaPCO2": 0.5,
+        "deltaParticipationPercentage": 25.0
+    }
+    return jsonify(change_event)
 
 
 if __name__ == '__main__':
