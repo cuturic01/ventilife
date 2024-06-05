@@ -121,6 +121,8 @@ public class SimulationService {
 		KieSession forwardKieSession = createForwardKieSession(patient, changeRecord);
 		forwardKieSession.fireAllRules();
 
+		System.out.println(changeRecord);
+
 		KieSession backwardKieSession = createBackwardKieSession(patient, changeRecord, modeMessage);
 		backwardKieSession.fireAllRules();
 
@@ -148,6 +150,8 @@ public class SimulationService {
 		KieSession kieSession = createBackwardKieSession(patient, changeRecord, modeMessage);
 		kieSession.fireAllRules();
 		processModeMessage(modeMessage);
+		patient.setRespiratorMode(mode);
+		patient.setFiO2(25.0);
 		return modeMessage;
 	}
 
@@ -177,7 +181,7 @@ public class SimulationService {
 	private KieSession createCepChangeKieSession(Patient patient, ChangeRecord changeRecord, ChangeEvent changeEvent) {
 		InputStream template = SimulationService.class.getResourceAsStream("/templates/cep.drt");
 		List<Thresholds> data = new ArrayList<>();
-		data.add(new Thresholds(-1.5, 0.5, -25.0));
+		data.add(new Thresholds(-0.4, 0.3, -7.5));
 
 		ObjectDataCompiler converter = new ObjectDataCompiler();
 		String drl = converter.compile(data, template);
@@ -213,12 +217,12 @@ public class SimulationService {
 				"Spontaneous",
 				"Mode",
 				true,
-				50.0,
+				70.0,
 				100.0,
-				-6.0,
-				-1.0,
+				-1.6,
 				0.0,
-				1.0
+				0.0,
+				1.2
 
 		));
 		kieSessionBackward.insert(new RespiratorMode(
@@ -227,55 +231,55 @@ public class SimulationService {
 				true,
 				85.0,
 				100.0,
-				-4.0,
-				-1.0,
+				-0.8,
 				0.0,
-				1.0
+				0.0,
+				0.6
 		));
 		kieSessionBackward.insert(new RespiratorMode(
 				"APRV",
 				"Spontaneous",
 				true,
-				50.0,
+				70.0,
 				85.0,
-				-6.0,
-				-4.0,
-				0.0,
-				1.0
+				-1.6,
+				-0.8,
+				0.6,
+				1.2
 		));
 
 		kieSessionBackward.insert(new RespiratorMode(
 				"Assisted",
 				"Mode",
 				false,
-				0.0,
-				50.0,
-				-10.0,
-				-6.0,
-				1.0,
-				10.0
+				25.0,
+				70.0,
+				-4.0,
+				-1.6,
+				1.2,
+				3.0
 		));
 		kieSessionBackward.insert(new RespiratorMode(
 				"SIMV",
 				"Assisted",
 				false,
-				10.0,
-				50.0,
-				-8.0,
-				-6.0,
-				1.0,
-				5.0
+				47.5,
+				70.0,
+				-2.8,
+				-1.6,
+				1.2,
+				2.1
 		));
 		kieSessionBackward.insert(new RespiratorMode(
 				"KMV_AC",
 				"Assisted",
 				false,
-				0.0,
-				10.0,
-				-10.0,
-				-8.0,
-				5.0,
-				10.0
+				25.0,
+				47.5,
+				-4.0,
+				-2.8,
+				2.1,
+				3.0
 		));
 
 		kieSessionBackward.insert(patient);

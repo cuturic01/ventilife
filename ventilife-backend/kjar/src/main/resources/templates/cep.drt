@@ -69,7 +69,7 @@ end
 rule "change event control variable 1"
     no-loop
     when
-        $patient: Patient($id: id, respiratorMode == "SIMV" || respiratorMode == "KMV/AC", volumeControlled == true)
+        $patient: Patient($id: id, respiratorMode == "SIMV" || respiratorMode == "KMV_AC", volumeControlled == true)
         $record: ChangeRecord(patientId == $id)
         $change: ChangeEvent(
             $id == patientId, // ovde templejti
@@ -96,7 +96,7 @@ end
 rule "change event control variable level 2"
     no-loop
     when
-        $patient: Patient($id: id, respiratorMode == "SIMV" || respiratorMode == "KMV/AC", volumeControlled == false)
+        $patient: Patient($id: id, respiratorMode == "SIMV" || respiratorMode == "KMV_AC", volumeControlled == false)
     then
         modify($patient) {
             setPressure(2.5)
@@ -108,7 +108,7 @@ rule "change event control variable level 3"
     no-loop
     when
         $patient: Patient(
-            $id: id, respiratorMode == "SIMV" || respiratorMode == "KMV/AC",
+            $id: id, respiratorMode == "SIMV" || respiratorMode == "KMV_AC",
             volumeControlled == false,
             pressure == 2.5
         )
@@ -127,7 +127,7 @@ rule "change FiO2"
     no-loop
     when
         $patient: Patient(
-            $id: id, respiratorMode == "SIMV" || respiratorMode == "KMV/AC",
+            $id: id, respiratorMode == "SIMV" || respiratorMode == "KMV_AC",
             FiO2 < 75,
             volumeControlled == false
         )
@@ -158,7 +158,7 @@ end
 rule "change FiO2 cap"
     when
         $patient: Patient(
-            $id: id, respiratorMode == "SIMV" || respiratorMode == "KMV/AC",
+            $id: id, respiratorMode == "SIMV" || respiratorMode == "KMV_AC",
             FiO2 >= 75,
             volumeControlled == false
         )

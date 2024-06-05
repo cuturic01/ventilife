@@ -14,9 +14,9 @@ def pera_data():
         "name": "Pera Peric",
         "weight": 100,
         "conscious": True,
-        "pO2": 6.0,
-        "pCO2": 8.9,
-        "participationPercentage": 80.0,
+        "pO2": 7.9,
+        "pCO2": 7.1,
+        "participationPercentage": 100.0,
         "tidalVolume": 300.0,
         "frequency": 36,
         "minuteVolume": 10800.0,
@@ -90,9 +90,9 @@ def get_worse(name):
         patient_id = marko_id
     change_event = {
         "patientId": patient_id,
-        "deltaPO2": -1.5,
-        "deltaPCO2": 0.5,
-        "deltaParticipationPercentage": -25.0
+        "deltaPO2": -0.4,
+        "deltaPCO2": 0.3,
+        "deltaParticipationPercentage": -7.5
     }
     return jsonify(change_event)
 
@@ -108,9 +108,9 @@ def get_better(name):
         patient_id = marko_id
     change_event = {
         "patientId": patient_id,
-        "deltaPO2": 1.5,
-        "deltaPCO2": -0.5,
-        "deltaParticipationPercentage": 25.0
+        "deltaPO2": 0.4,
+        "deltaPCO2": -0.3,
+        "deltaParticipationPercentage": -7.5
     }
     return jsonify(change_event)
 

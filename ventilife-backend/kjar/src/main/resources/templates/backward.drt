@@ -24,10 +24,10 @@ query isModeAppropriate(
         patientConscious;
     )
     eval(
-        participationPercentage > $rm.getParticipationPercentageLB() &&
-        participationPercentage > $rm.getParticipationPercentageUB() ||
-        deltaPO2 > $rm.getpO2LB() && deltaPO2 < $rm.getpO2UB() ||
-        deltaPCO2 > $rm.getpCO2LB() && deltaPCO2 < $rm.getpCO2UB()
+        participationPercentage >= $rm.getParticipationPercentageLB() &&
+        participationPercentage < $rm.getParticipationPercentageUB() ||
+        deltaPO2 >= $rm.getpO2LB() && deltaPO2 < $rm.getpO2UB() ||
+        deltaPCO2 >= $rm.getpCO2LB() && deltaPCO2 < $rm.getpCO2UB()
     )
 end
 
@@ -48,7 +48,7 @@ rule "find appropriate mode"
         )
     then
         modify($message) {
-            setRecommendedMode("Recommended mode is: " + mode + " (" + type + ").")
+            setRecommendedMode(mode)
         };
         System.out.println("Recommended mode is: " + mode + " (" + type + ").");
 end
@@ -67,7 +67,6 @@ rule "check chosen mode appropriate"
             ;
         )
     then
-        System.out.println("Chosen mode " + @{chosenMode});
         modify($message) {
             setModeConfirmation("Chosen mode " + @{chosenMode} + " is appropriate.")
         };
