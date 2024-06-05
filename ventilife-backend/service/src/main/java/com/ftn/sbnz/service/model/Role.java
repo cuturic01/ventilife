@@ -1,8 +1,9 @@
 package com.ftn.sbnz.service.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import javax.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "role")
@@ -41,4 +42,3 @@ public class Role implements GrantedAuthority {
         this.id = id;
     }
 }
-
