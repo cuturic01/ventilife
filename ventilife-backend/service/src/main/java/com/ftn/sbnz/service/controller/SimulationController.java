@@ -1,6 +1,7 @@
 package com.ftn.sbnz.service.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ftn.sbnz.model.models.ModeMessage;
 import com.ftn.sbnz.model.models.Patient;
 import com.ftn.sbnz.model.models.RespiratorDecision;
 import com.ftn.sbnz.service.service.SimulationService;
@@ -50,7 +51,7 @@ public class SimulationController {
 	}
 
 	@GetMapping(value = "/change-mode/{patientId}/{mode}")
-	public ResponseEntity<ResponseMessage> changeMode(@PathVariable String patientId, @PathVariable String mode) {
+	public ResponseEntity<ModeMessage> changeMode(@PathVariable String patientId, @PathVariable String mode) {
 		return ResponseEntity.ok(simulationService.changeMode(patientId, mode));
 	}
 

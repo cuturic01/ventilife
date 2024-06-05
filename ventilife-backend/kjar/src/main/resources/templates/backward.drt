@@ -7,6 +7,7 @@ package templates;
 
 import com.ftn.sbnz.model.models.RespiratorMode;
 import com.ftn.sbnz.model.models.ChangeRecord;
+import com.ftn.sbnz.model.models.ModeMessage;
 import com.ftn.sbnz.model.models.Patient;
 
 query isModeAppropriate(
@@ -24,7 +25,7 @@ query isModeAppropriate(
     )
     eval(
         participationPercentage > $rm.getParticipationPercentageLB() &&
-        participationPercentage < $rm.getParticipationPercentageUB() ||
+        participationPercentage > $rm.getParticipationPercentageUB() ||
         deltaPO2 > $rm.getpO2LB() && deltaPO2 < $rm.getpO2UB() ||
         deltaPCO2 > $rm.getpCO2LB() && deltaPCO2 < $rm.getpCO2UB()
     )
@@ -35,6 +36,7 @@ template "backward-rules"
 rule "find appropriate mode"
     when
         $patient: Patient(FiO2 >= 75)
+        $message: ModeMessage(patientId == $patient.getId())
         isModeAppropriate(
             mode,
             type,
@@ -45,12 +47,16 @@ rule "find appropriate mode"
             ;
         )
     then
+        modify($message) {
+            setRecommendedMode("Recommended mode is: " + mode + " (" + type + ").")
+        };
         System.out.println("Recommended mode is: " + mode + " (" + type + ").");
 end
 
-rule "check chosen mode"
+rule "check chosen mode appropriate"
     when
         $patient: Patient(FiO2 >= 75)
+        $message: ModeMessage(patientId == $patient.getId())
         isModeAppropriate(
             @{chosenMode},
             type,
@@ -61,7 +67,11 @@ rule "check chosen mode"
             ;
         )
     then
-        System.out.println("Chosen mode is appropriate.");
+        System.out.println("Chosen mode " + @{chosenMode});
+        modify($message) {
+            setModeConfirmation("Chosen mode " + @{chosenMode} + " is appropriate.")
+        };
+        System.out.println("Chosen mode " + @{chosenMode} + " is appropriate.");
 end
 
 end template
