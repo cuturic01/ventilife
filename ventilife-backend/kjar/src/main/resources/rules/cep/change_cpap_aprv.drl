@@ -1,9 +1,10 @@
-//package cep;
-//
-//import com.ftn.sbnz.model.events.ChangeEvent
-//import com.ftn.sbnz.model.events.PO2Change
-//import com.ftn.sbnz.model.models.Patient
-//import com.ftn.sbnz.model.models.ChangeRecord
+package cep;
+
+import com.ftn.sbnz.model.events.ChangeEvent
+import com.ftn.sbnz.model.events.PO2Change
+import com.ftn.sbnz.model.models.Patient
+import com.ftn.sbnz.model.models.ChangeRecord
+
 //
 //rule "change event"
 //    no-loop

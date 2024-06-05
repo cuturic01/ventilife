@@ -1,4 +1,5 @@
 template header
+
 deltaPO2Threshold
 deltaPCO2Threshold
 deltaParticipationPercentageThreshold
@@ -21,14 +22,14 @@ rule "change event"
             $id == patientId,
             deltaPO2 <= @{deltaPO2Threshold} ||
             deltaPCO2 >= @{deltaPCO2Threshold} ||
-            deltaParticipationPercentage >= @{deltaParticipationPercentageThreshold}
+            deltaParticipationPercentage <= @{deltaParticipationPercentageThreshold}
         )
     then
         modify($patient) {
             setFiO2($patient.getFiO2() + 25),
             setpO2($patient.getpO2() + $change.getDeltaPO2()),
             setpCO2($patient.getpCO2() + $change.getDeltaPCO2()),
-            setParticipationPercentage($patient.getParticipationPercentage() - $change.getDeltaParticipationPercentage())
+            setParticipationPercentage($patient.getParticipationPercentage() + $change.getDeltaParticipationPercentage())
         };
         modify($record){
             setDeltaPO2($record.getDeltaPO2() + $change.getDeltaPO2()),
@@ -48,13 +49,13 @@ rule "change event cap"
             $id == patientId,
             deltaPO2 <= @{deltaPO2Threshold} ||
             deltaPCO2 >= @{deltaPCO2Threshold} ||
-            deltaParticipationPercentage >= @{deltaParticipationPercentageThreshold}
+            deltaParticipationPercentage <= @{deltaParticipationPercentageThreshold}
         )
     then
         modify($patient) {
             setpO2($patient.getpO2() + $change.getDeltaPO2()),
             setpCO2($patient.getpCO2() + $change.getDeltaPCO2()),
-            setParticipationPercentage($patient.getParticipationPercentage() - $change.getDeltaParticipationPercentage())
+            setParticipationPercentage($patient.getParticipationPercentage() + $change.getDeltaParticipationPercentage())
         };
          modify($record){
             setDeltaPO2($record.getDeltaPO2() + $change.getDeltaPO2()),
@@ -74,14 +75,14 @@ rule "change event control variable 1"
             $id == patientId, // ovde templejti
             deltaPO2 <= @{deltaPO2Threshold} ||
             deltaPCO2 >= @{deltaPCO2Threshold} ||
-            deltaParticipationPercentage >= @{deltaParticipationPercentageThreshold}
+            deltaParticipationPercentage <= @{deltaParticipationPercentageThreshold}
         )
     then
         modify($patient) {
             setVolumeControlled(false),
             setpO2($patient.getpO2() + $change.getDeltaPO2()),
             setpCO2($patient.getpCO2() + $change.getDeltaPCO2()),
-            setParticipationPercentage($patient.getParticipationPercentage() - $change.getDeltaParticipationPercentage())
+            setParticipationPercentage($patient.getParticipationPercentage() + $change.getDeltaParticipationPercentage())
         };
         modify($record){
             setDeltaPO2($record.getDeltaPO2() + $change.getDeltaPO2()),
@@ -135,14 +136,14 @@ rule "change FiO2"
             $id == patientId, // ovde templejti
             deltaPO2 <= @{deltaPO2Threshold} ||
             deltaPCO2 >= @{deltaPCO2Threshold} ||
-            deltaParticipationPercentage >= @{deltaParticipationPercentageThreshold}
+            deltaParticipationPercentage <= @{deltaParticipationPercentageThreshold}
         )
     then
         modify($patient) {
             setFiO2($patient.getFiO2() + 25),
             setpO2($patient.getpO2() + $change.getDeltaPO2()),
             setpCO2($patient.getpCO2() + $change.getDeltaPCO2()),
-            setParticipationPercentage($patient.getParticipationPercentage() - $change.getDeltaParticipationPercentage())
+            setParticipationPercentage($patient.getParticipationPercentage() + $change.getDeltaParticipationPercentage())
         };
         modify($record){
             setDeltaPO2($record.getDeltaPO2() + $change.getDeltaPO2()),
@@ -166,13 +167,13 @@ rule "change FiO2 cap"
             $id == patientId, // ovde templejti
             deltaPO2 <= @{deltaPO2Threshold} ||
             deltaPCO2 >= @{deltaPCO2Threshold} ||
-            deltaParticipationPercentage >= @{deltaParticipationPercentageThreshold}
+            deltaParticipationPercentage <= @{deltaParticipationPercentageThreshold}
         )
     then
         modify($patient) {
             setpO2($patient.getpO2() + $change.getDeltaPO2()),
             setpCO2($patient.getpCO2() + $change.getDeltaPCO2()),
-            setParticipationPercentage($patient.getParticipationPercentage() - $change.getDeltaParticipationPercentage())
+            setParticipationPercentage($patient.getParticipationPercentage() + $change.getDeltaParticipationPercentage())
         };
          modify($record){
             setDeltaPO2($record.getDeltaPO2() + $change.getDeltaPO2()),
@@ -181,6 +182,63 @@ rule "change FiO2 cap"
         };
         delete($change);
         System.out.println("Patient FiO2 reached 75%. Consider changing the mode.");
+end
+
+rule "getting better"
+    when
+        $patient: Patient(
+            $id: id,
+            FiO2 > 25
+        )
+        $record: ChangeRecord(patientId == $id)
+        $change: ChangeEvent(
+            $id == patientId, // ovde templejti
+            deltaPO2 > @{deltaPO2Threshold} ||
+            deltaPCO2 < @{deltaPCO2Threshold} ||
+            deltaParticipationPercentage > @{deltaParticipationPercentageThreshold}
+        )
+    then
+        modify($patient) {
+            setFiO2($patient.getFiO2() - 25),
+            setpO2($patient.getpO2() + $change.getDeltaPO2()),
+            setpCO2($patient.getpCO2() + $change.getDeltaPCO2()),
+            setParticipationPercentage($patient.getParticipationPercentage() + $change.getDeltaParticipationPercentage())
+        };
+         modify($record){
+            setDeltaPO2($record.getDeltaPO2() + $change.getDeltaPO2()),
+            setDeltaPCO2($record.getDeltaPCO2() + $change.getDeltaPCO2()),
+            setParticipationPercentage($patient.getParticipationPercentage())
+        };
+        delete($change);
+        System.out.println("Patient FiO2 is getting better.");
+end
+
+rule "get better cap"
+    when
+        $patient: Patient(
+            $id: id,
+            FiO2 <= 25
+        )
+        $record: ChangeRecord(patientId == $id)
+        $change: ChangeEvent(
+            $id == patientId, // ovde templejti
+            deltaPO2 > @{deltaPO2Threshold} ||
+            deltaPCO2 < @{deltaPCO2Threshold} ||
+            deltaParticipationPercentage > @{deltaParticipationPercentageThreshold}
+        )
+    then
+        modify($patient) {
+            setpO2($patient.getpO2() + $change.getDeltaPO2()),
+            setpCO2($patient.getpCO2() + $change.getDeltaPCO2()),
+            setParticipationPercentage($patient.getParticipationPercentage() + $change.getDeltaParticipationPercentage())
+        };
+         modify($record) {
+            setDeltaPO2($record.getDeltaPO2() + $change.getDeltaPO2()),
+            setDeltaPCO2($record.getDeltaPCO2() + $change.getDeltaPCO2()),
+            setParticipationPercentage($patient.getParticipationPercentage())
+        };
+        delete($change);
+        System.out.println("Patient FiO2 is getting better, consider changing the mode.");
 end
 
 end template

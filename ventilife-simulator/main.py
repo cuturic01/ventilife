@@ -92,6 +92,24 @@ def get_worse(name):
         "patientId": patient_id,
         "deltaPO2": -1.5,
         "deltaPCO2": 0.5,
+        "deltaParticipationPercentage": -25.0
+    }
+    return jsonify(change_event)
+
+
+@app.route('/get-better/<name>')
+def get_better(name):
+    patient_id = ""
+    if name == "pera":
+        patient_id = pera_id
+    elif name == "jovan":
+        patient_id = jovan_id
+    elif name == "marko":
+        patient_id = marko_id
+    change_event = {
+        "patientId": patient_id,
+        "deltaPO2": 1.5,
+        "deltaPCO2": -0.5,
         "deltaParticipationPercentage": 25.0
     }
     return jsonify(change_event)

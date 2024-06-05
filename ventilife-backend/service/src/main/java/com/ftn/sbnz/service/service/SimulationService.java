@@ -97,8 +97,8 @@ public class SimulationService {
 
 	// TODO: kad pacijenta uspavati?
 	// TODO: dodati pravila za poboljsanje stanja pacijenta
-	public Patient getWorse(String name) throws JsonProcessingException {
-		String url = "http://localhost:5000/get-worse/" + name;
+	public Patient changePatientState(String name, String command) throws JsonProcessingException {
+		String url = "http://localhost:5000/get-" + command + "/" + name;
 		RestTemplate restTemplate = new RestTemplate();
 		String response = restTemplate.getForObject(url, String.class);
 		ChangeEvent changeEvent = objectMapper.readValue(response, ChangeEvent.class);
@@ -116,6 +116,11 @@ public class SimulationService {
 
 		KieSession cepKieSession = createCepChangeKieSession(patient, changeRecord, changeEvent);
 		cepKieSession.fireAllRules();
+
+		// TODO: testirati posle
+		KieSession forwardKieSession = createForwardKieSession(patient, changeRecord);
+		forwardKieSession.fireAllRules();
+
 		KieSession backwardKieSession = createBackwardKieSession(patient, changeRecord);
 		backwardKieSession.fireAllRules();
 
@@ -155,10 +160,19 @@ public class SimulationService {
 		kieSession.fireAllRules();
 	}
 
+	private KieSession createForwardKieSession(Patient patient, ChangeRecord changeRecord) {
+		KieServices ks = KieServices.Factory.get();
+		KieContainer kContainer = ks.getKieClasspathContainer();
+		KieSession kieSession = kContainer.newKieSession("fwKsession");
+		kieSession.insert(patient);
+		kieSession.insert(changeRecord);
+		return kieSession;
+	}
+
 	private KieSession createCepChangeKieSession(Patient patient, ChangeRecord changeRecord, ChangeEvent changeEvent) {
 		InputStream template = SimulationService.class.getResourceAsStream("/templates/cep.drt");
 		List<Thresholds> data = new ArrayList<>();
-		data.add(new Thresholds(-1.5, 0.5, 25.0));
+		data.add(new Thresholds(-1.5, 0.5, -25.0));
 
 		ObjectDataCompiler converter = new ObjectDataCompiler();
 		String drl = converter.compile(data, template);

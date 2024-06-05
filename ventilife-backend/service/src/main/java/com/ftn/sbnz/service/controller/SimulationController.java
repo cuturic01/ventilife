@@ -39,7 +39,13 @@ public class SimulationController {
 
 	@GetMapping(value = "/get-worse/{name}")
 	public ResponseEntity<Patient> getWorse(@PathVariable String name) throws JsonProcessingException {
-		Patient patient = simulationService.getWorse(name);
+		Patient patient = simulationService.changePatientState(name, "worse");
+		return ResponseEntity.ok(patient);
+	}
+
+	@GetMapping(value = "/get-better/{name}")
+	public ResponseEntity<Patient> getBetter(@PathVariable String name) throws JsonProcessingException {
+		Patient patient = simulationService.changePatientState(name, "better");
 		return ResponseEntity.ok(patient);
 	}
 
