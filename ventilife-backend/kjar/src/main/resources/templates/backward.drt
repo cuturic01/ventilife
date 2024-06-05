@@ -35,7 +35,7 @@ template "backward-rules"
 
 rule "find appropriate mode"
     when
-        $patient: Patient(FiO2 >= 75)
+        $patient: Patient()
         $message: ModeMessage(patientId == $patient.getId())
         isModeAppropriate(
             mode,
@@ -55,7 +55,7 @@ end
 
 rule "check chosen mode appropriate"
     when
-        $patient: Patient(FiO2 >= 75)
+        $patient: Patient()
         $message: ModeMessage(patientId == $patient.getId())
         isModeAppropriate(
             @{chosenMode},

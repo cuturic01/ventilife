@@ -108,9 +108,9 @@ def get_better(name):
         patient_id = marko_id
     change_event = {
         "patientId": patient_id,
-        "deltaPO2": 0.4,
-        "deltaPCO2": -0.3,
-        "deltaParticipationPercentage": -7.5
+        "deltaPO2": 0.41,
+        "deltaPCO2": -0.31,
+        "deltaParticipationPercentage": 7.51
     }
     return jsonify(change_event)
 

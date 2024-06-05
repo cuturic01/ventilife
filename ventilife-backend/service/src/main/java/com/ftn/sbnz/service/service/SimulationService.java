@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-// TODO: Popraviti brojeve da se sve lepse uklapa
 @Service
 public class SimulationService {
 
@@ -100,6 +99,7 @@ public class SimulationService {
 		RestTemplate restTemplate = new RestTemplate();
 		String response = restTemplate.getForObject(url, String.class);
 		ChangeEvent changeEvent = objectMapper.readValue(response, ChangeEvent.class);
+		System.out.println(changeEvent);
 
 		Patient patient = patients
 				.stream()
@@ -131,9 +131,7 @@ public class SimulationService {
 		return patient;
 	}
 
-	// TODO: dodati pravila za slucaj kad se odabrani i preporuceni mod ne poklapaju i ubaciti response message u sesiju
 	// TODO: momenat prebacivanja moda treba da ima potvrdu
-	// TODO: Kad se mod prebaci resetovati FiO2 na 25%
 	public ModeMessage changeMode(String patientId, String mode) {
 		Patient patient = patients
 				.stream()
