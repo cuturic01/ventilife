@@ -5,8 +5,8 @@ INSERT INTO ROLE (name) VALUES ('ROLE_ADMIN');
 
 -- users
 
-INSERT INTO USERS (name, surname, email, password) VALUES ('Marko', 'Janosevic', 'marko@mail.com', 'aaa');
-INSERT INTO USERS (name, surname, email, password) VALUES ('Milos', 'Cuturic', 'milos@mail.com', 'bbb');
+INSERT INTO USERS (name, surname, email, password) VALUES ('Marko', 'Janosevic', 'marko@mail.com', '$2a$10$c1VQizq/ZqqOauIt0qP/9OSlXSFk7dPvBVGDW.oJCm760ZnLYL8uW');
+INSERT INTO USERS (name, surname, email, password) VALUES ('Milos', 'Cuturic', 'milos@mail.com', '$2a$10$NZz/5OdUUs3Uf12cqm4cXe8azc3q83pjMRCtwiNXfWrIhJN0vujmq');
 
 -- user-role
 

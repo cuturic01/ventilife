@@ -86,7 +86,6 @@ public class WebSecurityConfig {
         // sve neautentifikovane zahteve obradi uniformno i posalji 401 gresku
         http.exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint);
         http.authorizeHttpRequests()
-                .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
                 .antMatchers("/api/user/register").permitAll()
                 .antMatchers("/api/user/login").permitAll()
                 // /h2-console/** ako se koristi H2 baza)
