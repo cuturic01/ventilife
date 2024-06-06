@@ -61,4 +61,15 @@ public class SimulationController {
 		return ResponseEntity.ok(new ResponseMessage("Bad inhalation."));
 	}
 
+	@GetMapping(value = "/get-min-pO2")
+	public ResponseEntity<Patient> getMinPO2() {
+		return ResponseEntity.ok(simulationService.getMinPO2());
+	}
+
+	@GetMapping(value = "/get-max-pCO2")
+	public ResponseEntity<Patient> getMaxPCO2() {
+		return ResponseEntity.ok(simulationService.getMaxPCO2());
+
+	}
+
 }
