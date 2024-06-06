@@ -1,0 +1,61 @@
+.container {
+  display: flex;
+  width: 50vw;
+}
+
+.left-side, .right-side {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.left-side form {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  gap: 5px;
+  width: 100%;
+}
+
+.left-side form mat-form-field {
+  font-size: larger;
+}
+
+.left-side {
+  margin: 20px;
+}
+
+.right-side {
+  background-color: #012622;
+  color: #F5F5F5;
+  padding: 20px;
+
+}
+
+.right-side div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+}
+
+.right-side div a {
+  font-weight: bold;
+  font-size: x-large;
+  color: #26A96C;
+}
+
+.right-side div a:hover {
+  cursor: pointer;
+}
+
+form button {
+  background-color: #012622 !important;
+  color: #F5F5F5 !important;
+  font-size: larger !important;
+  padding: 5px 10px;
+}

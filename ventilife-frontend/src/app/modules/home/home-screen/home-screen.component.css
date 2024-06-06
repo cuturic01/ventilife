@@ -1,0 +1,18 @@
+#background-container {
+  width: 100%;
+  margin-top: -85px;
+  height: 100vh;
+  overflow: hidden;
+
+}
+
+#background-image {
+  width: 100%;
+  object-fit: cover;
+  filter: blur(20px);
+  transition: filter 0.3s;
+}
+
+#background-image.loaded {
+  filter: none;
+}

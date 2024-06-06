@@ -1,0 +1,11 @@
+@import '@angular/material/prebuilt-themes/deeppurple-amber.css';
+
+html, body {
+  height: 100%;
+  background-color: #1B2223;
+  justify-content: center;
+}
+
+html, body { height: 100%; }
+body { margin: 0; padding-top: 20px; overflow-y: hidden; font-family: 'Poppins', sans-serif; }
+h1, h2, h3 {margin: 0}
