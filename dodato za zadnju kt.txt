@@ -1,0 +1,8 @@
+- zavrsen cep na 3 nivoa
+- dodata jednostavna pravila 
+- dodat python simulator
+- dodati templejti
+- dinamicko ucitavanje templejta
+- dodat query za povecanje kompleksnosti
+- napravljen front
+- dodata autentifikacija i autorizacija

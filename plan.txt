@@ -1,4 +1,0 @@
-- simulacija:
-sa flask servera, poslati podatke o 3 pacijenta (Pera Peric, Jovan Jovic, Marko Markovic). Cuvati ih u nekoj singlton listi u javi. Kada se pacijent "doda" u sistem, podaci se provlace kroz forward za proveru da li mora na respirator i za forward za racunanje normalnih parametara. Omoguciti endpointe za simulaciju change eventa i inhalation eventa, kao i endpoint za promenu moda respiratora.
-
-- dodati kverije, koji ce u odnosu na sve change eventove i inhalation eventove odrediti koji pacijent je u najkriticnijem stanju kako bi doktor vise pazio na njega.

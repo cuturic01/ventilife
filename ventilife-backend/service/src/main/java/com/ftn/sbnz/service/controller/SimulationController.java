@@ -1,6 +1,7 @@
 package com.ftn.sbnz.service.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ftn.sbnz.model.models.ModeMessage;
 import com.ftn.sbnz.model.models.Patient;
 import com.ftn.sbnz.model.models.RespiratorDecision;
 import com.ftn.sbnz.service.service.SimulationService;
@@ -39,8 +40,25 @@ public class SimulationController {
 
 	@GetMapping(value = "/get-worse/{name}")
 	public ResponseEntity<Patient> getWorse(@PathVariable String name) throws JsonProcessingException {
-		Patient patient = simulationService.getWorse(name);
+		Patient patient = simulationService.changePatientState(name, "worse");
 		return ResponseEntity.ok(patient);
+	}
+
+	@GetMapping(value = "/get-better/{name}")
+	public ResponseEntity<Patient> getBetter(@PathVariable String name) throws JsonProcessingException {
+		Patient patient = simulationService.changePatientState(name, "better");
+		return ResponseEntity.ok(patient);
+	}
+
+	@GetMapping(value = "/change-mode/{patientId}/{mode}")
+	public ResponseEntity<ModeMessage> changeMode(@PathVariable String patientId, @PathVariable String mode) {
+		return ResponseEntity.ok(simulationService.changeMode(patientId, mode));
+	}
+
+	@GetMapping(value = "/bad-inhalation/{name}")
+	public ResponseEntity<ResponseMessage> badInhalation(@PathVariable String name) throws JsonProcessingException {
+		simulationService.badInhalation(name);
+		return ResponseEntity.ok(new ResponseMessage("Bad inhalation."));
 	}
 
 }

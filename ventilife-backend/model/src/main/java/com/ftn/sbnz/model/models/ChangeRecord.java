@@ -65,7 +65,8 @@ public class ChangeRecord {
                 "patientId=" + patientId +
                 ", deltaPO2=" + deltaPO2 +
                 ", deltaPCO2=" + deltaPCO2 +
-                ", deltaParticipationPercentage=" + participationPercentage +
+                ", participationPercentage=" + participationPercentage +
+                ", chosenMode='" + chosenMode + '\'' +
                 '}';
     }
 

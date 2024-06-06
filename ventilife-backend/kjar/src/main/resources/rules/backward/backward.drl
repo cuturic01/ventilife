@@ -3,6 +3,7 @@ package backward;
 import com.ftn.sbnz.model.models.RespiratorMode
 import com.ftn.sbnz.model.models.ChangeRecord
 import com.ftn.sbnz.model.models.Patient
+import com.ftn.sbnz.model.models.ModeMessage
 
 
 // doadati query koji ce pronaci pacijenta sa najboljim i najgorim promenama u poslednja 24h
