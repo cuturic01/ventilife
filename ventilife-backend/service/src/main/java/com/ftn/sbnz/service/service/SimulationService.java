@@ -88,7 +88,7 @@ public class SimulationService {
 		System.out.println(patient);
 		patients.add(patient);
 		stablePatientParamsList.add(getStablePatientParams(patient));
-		changeRecords.add(new ChangeRecord(patient.getId(), 0.0, 0.0, 0.0, "APRV"));
+		changeRecords.add(new ChangeRecord(patient.getId(), 0.0, 0.0, 0.0, "CPAP"));
 		RespiratorDecision respiratorDecision = getRespiratorDecision(patient);
 		if (respiratorDecision.getFinalDecision())
 			patient.setRespiratorMode("CPAP");
@@ -149,7 +149,10 @@ public class SimulationService {
 		kieSession.fireAllRules();
 		processModeMessage(modeMessage);
 		patient.setRespiratorMode(mode);
-		patient.setFiO2(25.0);
+
+		KieSession simpleKieSession = createSimpleKieSession(patient, changeRecord);
+		simpleKieSession.fireAllRules();
+
 		return modeMessage;
 	}
 
@@ -168,9 +171,7 @@ public class SimulationService {
 	}
 
 	private KieSession createForwardKieSession(Patient patient, ChangeRecord changeRecord) {
-		KieServices ks = KieServices.Factory.get();
-		KieContainer kContainer = ks.getKieClasspathContainer();
-		KieSession kieSession = kContainer.newKieSession("fwKsession");
+		KieSession kieSession = kieContainer.newKieSession("fwKsession");
 		kieSession.insert(patient);
 		kieSession.insert(changeRecord);
 		return kieSession;
@@ -192,9 +193,7 @@ public class SimulationService {
 	}
 
 	private KieSession createCepInhalationKieSession(Patient patient, InhaleEvent inhaleEvent) {
-		KieServices ks = KieServices.Factory.get();
-		KieContainer kContainer = ks.getKieClasspathContainer();
-		KieSession kieSessionCep = kContainer.newKieSession("cepKsession");
+		KieSession kieSessionCep = kieContainer.newKieSession("cepKsession");
 		kieSessionCep.insert(patient);
 		kieSessionCep.insert(inhaleEvent);
 		return kieSessionCep;
@@ -204,8 +203,10 @@ public class SimulationService {
 		InputStream template = SimulationService.class.getResourceAsStream("/templates/backward.drt");
 
 		List<ChangeRecord> data = new ArrayList<>();
-		System.out.println(changeRecord.getChosenMode());
+		System.out.println(changeRecord);
 		data.add(changeRecord);
+//		ChangeRecord changeRecord1 = new ChangeRecord(patient.getId(), -0.77, 0.569, 85.03, "CPAP");
+//		data.add(changeRecord1);
 
 		ObjectDataCompiler converter = new ObjectDataCompiler();
 		String drl = converter.compile(data, template);
@@ -283,6 +284,13 @@ public class SimulationService {
 		kieSessionBackward.insert(patient);
 		kieSessionBackward.insert(modeMessage);
 		return kieSessionBackward;
+	}
+
+	private KieSession createSimpleKieSession(Patient patient, ChangeRecord changeRecord) {
+		KieSession kieSession = kieContainer.newKieSession("simpleKsession");
+		kieSession.insert(patient);
+		kieSession.insert(changeRecord);
+		return kieSession;
 	}
 
 	private KieSession createKieSessionFromDRL(String drl){

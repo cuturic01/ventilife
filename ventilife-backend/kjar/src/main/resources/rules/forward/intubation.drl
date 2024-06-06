@@ -7,16 +7,26 @@ import com.ftn.sbnz.model.models.ChangeRecord
 rule "intubate"
     when
         $p: Patient(respiratorMode == "APRV", FiO2 >= 75)
-        ChangeRecord(patientId == $p.getId(), deltaPO2 < 0)
+        ChangeRecord(patientId == $p.getId(), deltaPO2 < -2)
     then
         modify($p){
             setConscious(false)
         }
 end
 
-rule "regain of consciussness"
+rule "regain of consciussness 1"
+when
+        $p: Patient(respiratorMode == "APRV")
+        ChangeRecord(patientId == $p.getId(), deltaPO2 > -2)
+    then
+        modify($p){
+            setConscious(true)
+        }
+end
+
+rule "regain of consciussness 2"
     when
-        $p: Patient(respiratorMode == "SIMV", FiO2 <= 25 )
+        $p: Patient(respiratorMode == "SIMV")
         ChangeRecord(patientId == $p.getId(), deltaPO2 > 0)
     then
         modify($p){

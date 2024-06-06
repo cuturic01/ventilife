@@ -1,7 +1,9 @@
 template header
+
 chosenMode
 deltaPO2
 deltaPCO2
+participationPercentage
 
 package templates;
 
@@ -41,7 +43,7 @@ rule "find appropriate mode"
             mode,
             type,
             $patient.getConscious(),
-            $patient.getParticipationPercentage(),
+            @{participationPercentage},
             @{deltaPO2},
             @{deltaPCO2}
             ;
@@ -61,7 +63,7 @@ rule "check chosen mode appropriate"
             @{chosenMode},
             type,
             $patient.getConscious(),
-            $patient.getParticipationPercentage(),
+            @{participationPercentage},
             @{deltaPO2},
             @{deltaPCO2}
             ;
