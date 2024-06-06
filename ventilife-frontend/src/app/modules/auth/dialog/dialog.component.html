@@ -1,0 +1,79 @@
+<div class="container">
+  <div class="left-side">
+    <div *ngIf="showLoginForm">
+      <h1>Login</h1>
+      <form (ngSubmit)="onLoginSubmit()">
+        <mat-form-field appearance="fill">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" [(ngModel)]="loginData.email" name="loginEmail" required email>
+          <mat-error>
+            Please enter a valid email address
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" [(ngModel)]="loginData.password" name="loginPassword" required minlength="6">
+          <mat-error>
+            Password must be at least 6 characters long
+          </mat-error>
+        </mat-form-field>
+
+        <button mat-button color="primary" type="submit">Login</button>
+      </form>
+    </div>
+
+    <div *ngIf="!showLoginForm">
+      <h1>Register</h1>
+      <form (ngSubmit)="onRegisterSubmit()">
+        <mat-form-field appearance="fill">
+          <mat-label>Name</mat-label>
+          <input matInput type="text" [(ngModel)]="registerData.name" name="registerName" required>
+          <mat-error *ngIf="registerData.name === ''">
+            Name is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Surname</mat-label>
+          <input matInput type="text" [(ngModel)]="registerData.surname" name="registerSurname" required>
+          <mat-error *ngIf="registerData.surname === ''">
+            Surname is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" [(ngModel)]="registerData.email" name="registerEmail" required email>
+          <mat-error>
+            Please enter a valid email address
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" [(ngModel)]="registerData.password" name="registerPassword" required minlength="6">
+          <mat-error>
+            Password must be at least 6 characters long
+          </mat-error>
+        </mat-form-field>
+
+        <button mat-raised-button type="submit">Register</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="right-side">
+    <div *ngIf="showLoginForm">
+      <h1>Welcome back! Please login to your account.</h1>
+      <h2>Don't have an account?</h2>
+      <a (click)="changeForm()">Create one</a>
+    </div>
+
+    <div *ngIf="!showLoginForm">
+      <h1>Welcome! Create your account to start.</h1>
+      <h2>Already have an account?</h2>
+      <a (click)="changeForm()">Login</a>
+    </div>
+  </div>
+</div>

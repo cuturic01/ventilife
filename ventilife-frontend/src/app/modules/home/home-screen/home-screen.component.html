@@ -1,0 +1,9 @@
+<div id="background-container">
+  <img
+    id="background-image"
+    src="resources/background.webp"
+    alt="Background"
+    [class.loaded]="isImageLoaded"
+    (load)="onImageLoad()"
+  />
+</div>
