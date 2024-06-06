@@ -4,6 +4,7 @@ import java.util.UUID;
 
 public class Patient {
     private UUID id;
+    private String name;
     private Double weight;
     private Boolean conscious;
     private Double pO2;
@@ -25,7 +26,7 @@ public class Patient {
     }
 
     public Patient(
-            Double weight,
+            String name, Double weight,
             Boolean conscious,
             Double pO2,
             Double pCO2,
@@ -41,6 +42,7 @@ public class Patient {
             String respiratorMode,
             Boolean volumeControlled
     ) {
+        this.name = name;
         this.respiratorMode = respiratorMode;
         this.volumeControlled = volumeControlled;
         this.id = UUID.randomUUID();
@@ -56,11 +58,18 @@ public class Patient {
         this.resistance = resistance;
         this.gasFlow = gasFlow;
         this.compliance = compliance;
-        FiO2 = fiO2;
+        this.FiO2 = fiO2;
     }
 
     // region Getters and Setters
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public UUID getId() {
         return id;
@@ -195,6 +204,8 @@ public class Patient {
     @Override
     public String toString() {
         return "Patient{" +
+                "\n id=" + id +
+                "\n name=" + name +
                 "\n weight=" + weight +
                 "\n conscious=" + conscious +
                 "\n pO2=" + pO2 +
@@ -208,7 +219,7 @@ public class Patient {
                 "\n gasFlow=" + gasFlow +
                 "\n compliance=" + compliance +
                 "\n FiO2=" + FiO2 +
-                '}';
+                "\n}";
     }
 }
 

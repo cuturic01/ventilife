@@ -58,4 +58,14 @@ public class ChangeEvent {
     public void setDeltaParticipationPercentage(Double deltaParticipationPercentage) {
         this.deltaParticipationPercentage = deltaParticipationPercentage;
     }
+
+    @Override
+    public String toString() {
+        return "ChangeEvent{" +
+                "patientId=" + patientId +
+                ", deltaPO2=" + deltaPO2 +
+                ", deltaPCO2=" + deltaPCO2 +
+                ", deltaParticipationPercentage=" + deltaParticipationPercentage +
+                '}';
+    }
 }

@@ -1,12 +1,15 @@
 template header
+
 chosenMode
 deltaPO2
 deltaPCO2
+participationPercentage
 
 package templates;
 
 import com.ftn.sbnz.model.models.RespiratorMode;
 import com.ftn.sbnz.model.models.ChangeRecord;
+import com.ftn.sbnz.model.models.ModeMessage;
 import com.ftn.sbnz.model.models.Patient;
 
 query isModeAppropriate(
@@ -23,10 +26,10 @@ query isModeAppropriate(
         patientConscious;
     )
     eval(
-        participationPercentage > $rm.getParticipationPercentageLB() &&
+        participationPercentage >= $rm.getParticipationPercentageLB() &&
         participationPercentage < $rm.getParticipationPercentageUB() ||
-        deltaPO2 > $rm.getpO2LB() && deltaPO2 < $rm.getpO2UB() ||
-        deltaPCO2 > $rm.getpCO2LB() && deltaPCO2 < $rm.getpCO2UB()
+        deltaPO2 >= $rm.getpO2LB() && deltaPO2 < $rm.getpO2UB() ||
+        deltaPCO2 >= $rm.getpCO2LB() && deltaPCO2 < $rm.getpCO2UB()
     )
 end
 
@@ -34,34 +37,42 @@ template "backward-rules"
 
 rule "find appropriate mode"
     when
-        $patient: Patient(FiO2 >= 75)
+        $patient: Patient()
+        $message: ModeMessage(patientId == $patient.getId())
         isModeAppropriate(
             mode,
             type,
             $patient.getConscious(),
-            $patient.getParticipationPercentage(),
+            @{participationPercentage},
             @{deltaPO2},
             @{deltaPCO2}
             ;
         )
     then
+        modify($message) {
+            setRecommendedMode(mode)
+        };
         System.out.println("Recommended mode is: " + mode + " (" + type + ").");
 end
 
-rule "check chosen mode"
+rule "check chosen mode appropriate"
     when
-        $patient: Patient(FiO2 >= 75)
+        $patient: Patient()
+        $message: ModeMessage(patientId == $patient.getId())
         isModeAppropriate(
             @{chosenMode},
             type,
             $patient.getConscious(),
-            $patient.getParticipationPercentage(),
+            @{participationPercentage},
             @{deltaPO2},
             @{deltaPCO2}
             ;
         )
     then
-        System.out.println("Chosen mode is appropriate.");
+        modify($message) {
+            setModeConfirmation("Chosen mode " + @{chosenMode} + " is appropriate.")
+        };
+        System.out.println("Chosen mode " + @{chosenMode} + " is appropriate.");
 end
 
 end template
