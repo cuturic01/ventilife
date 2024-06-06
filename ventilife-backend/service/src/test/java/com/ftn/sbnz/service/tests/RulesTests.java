@@ -12,11 +12,12 @@ import org.kie.api.builder.Results;
 import org.kie.api.io.ResourceType;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.rule.QueryResults;
+import org.kie.api.runtime.rule.QueryResultsRow;
 import org.kie.internal.utils.KieHelper;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class RulesTests {
 
@@ -499,6 +500,55 @@ public class RulesTests {
         kieSessionBackward.insert(changeRecord);
 
         kieSessionBackward.fireAllRules();
+    }
+
+    @Test
+    public void testQuery() {
+        KieServices ks = KieServices.Factory.get();
+        KieContainer kContainer = ks.getKieClasspathContainer();
+        KieSession kieSession = kContainer.newKieSession("queryKsession");
+
+        Patient patient = new Patient();
+        ChangeRecord changeRecord = new ChangeRecord(patient.getId(), -5.0, 5.0, 0.0);
+        Patient patient1 = new Patient();
+        ChangeRecord changeRecord1 = new ChangeRecord(patient1.getId(), -7.0, 7.0, 0.0);
+        Patient patient2 = new Patient();
+        ChangeRecord changeRecord2 = new ChangeRecord(patient2.getId(), -9.0, 9.0, 0.0);
+        System.out.println(patient2.getId());
+
+        kieSession.insert(patient);
+        kieSession.insert(patient1);
+        kieSession.insert(patient2);
+        kieSession.insert(changeRecord);
+        kieSession.insert(changeRecord1);
+        kieSession.insert(changeRecord2);
+
+        kieSession.fireAllRules();
+
+//        QueryResults results = kieSession.getQueryResults("getMaxDeltaPCO2Patient");
+//
+//        Set<Patient> uniquePatients = new HashSet<>();
+//        for (QueryResultsRow row : results) {
+//            Patient p = (Patient) row.get("$patient");
+//            uniquePatients.add(p);
+//        }
+//
+//        for (Patient p : uniquePatients) {
+//            System.out.println(p);
+//        }
+
+        QueryResults results = kieSession.getQueryResults("getMinDeltaPO2Patient");
+
+        Set<Patient> uniquePatients = new HashSet<>();
+        for (QueryResultsRow row : results) {
+            Patient p = (Patient) row.get("$patient");
+            uniquePatients.add(p);
+        }
+
+        for (Patient p : uniquePatients) {
+            System.out.println(p);
+        }
+
     }
 
 }

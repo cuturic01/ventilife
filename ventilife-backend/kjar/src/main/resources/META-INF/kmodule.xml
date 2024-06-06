@@ -11,6 +11,9 @@
     <kbase name="simple" eventProcessingMode="stream" packages="simple">
         <ksession name="simpleKsession" clockType="pseudo"/>
     </kbase>
+    <kbase name="query" eventProcessingMode="stream" packages="query">
+        <ksession name="queryKsession" clockType="pseudo"/>
+    </kbase>
     <kbase name="template-KBase" packages="templates">
         <ksession name="templateSimpleKsession"/>
     </kbase>
