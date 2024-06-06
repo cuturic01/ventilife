@@ -13,15 +13,15 @@ import org.kie.api.builder.Results;
 import org.kie.api.io.ResourceType;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.rule.QueryResults;
+import org.kie.api.runtime.rule.QueryResultsRow;
 import org.kie.internal.utils.KieHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class SimulationService {
@@ -117,7 +117,6 @@ public class SimulationService {
 		KieSession cepKieSession = createCepChangeKieSession(patient, changeRecord, changeEvent);
 		cepKieSession.fireAllRules();
 
-		// TODO: testirati posle
 		KieSession forwardKieSession = createForwardKieSession(patient, changeRecord);
 		forwardKieSession.fireAllRules();
 
@@ -170,6 +169,35 @@ public class SimulationService {
 		kieSession.fireAllRules();
 	}
 
+
+	public Patient getMinPO2() {
+		KieSession kieSession = createQueryKieSession();
+		kieSession.fireAllRules();
+		Patient patient = new Patient();
+
+		QueryResults results = kieSession.getQueryResults("getMinDeltaPO2Patient");
+		for (QueryResultsRow row : results) {
+			Patient p = (Patient) row.get("$patient");
+			patient = p;
+		}
+
+		return patient;
+	}
+
+	public Patient getMaxPCO2() {
+		KieSession kieSession = createQueryKieSession();
+		kieSession.fireAllRules();
+		Patient patient = new Patient();
+
+		QueryResults results = kieSession.getQueryResults("getMaxDeltaPCO2Patient");
+		for (QueryResultsRow row : results) {
+			Patient p = (Patient) row.get("$patient");
+			patient = p;
+		}
+
+		return patient;
+	}
+
 	private KieSession createForwardKieSession(Patient patient, ChangeRecord changeRecord) {
 		KieSession kieSession = kieContainer.newKieSession("fwKsession");
 		kieSession.insert(patient);
@@ -203,10 +231,7 @@ public class SimulationService {
 		InputStream template = SimulationService.class.getResourceAsStream("/templates/backward.drt");
 
 		List<ChangeRecord> data = new ArrayList<>();
-		System.out.println(changeRecord);
 		data.add(changeRecord);
-//		ChangeRecord changeRecord1 = new ChangeRecord(patient.getId(), -0.77, 0.569, 85.03, "CPAP");
-//		data.add(changeRecord1);
 
 		ObjectDataCompiler converter = new ObjectDataCompiler();
 		String drl = converter.compile(data, template);
@@ -293,6 +318,18 @@ public class SimulationService {
 		return kieSession;
 	}
 
+	private KieSession createQueryKieSession() {
+		KieSession kieSession = kieContainer.newKieSession("queryKsession");
+
+		for (Patient patient : patients)
+			kieSession.insert(patient);
+
+		for (ChangeRecord changeRecord : changeRecords)
+			kieSession.insert(changeRecord);
+
+		return kieSession;
+	}
+
 	private KieSession createKieSessionFromDRL(String drl){
 		KieHelper kieHelper = new KieHelper();
 		kieHelper.addContent(drl, ResourceType.DRL);
@@ -315,4 +352,5 @@ public class SimulationService {
 		if (modeMessage.getModeConfirmation() == null)
 			modeMessage.setModeConfirmation("Chosen mode is not appropriate.");
 	}
+
 }
