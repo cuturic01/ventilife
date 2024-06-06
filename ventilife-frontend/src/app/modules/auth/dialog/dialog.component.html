@@ -2,19 +2,22 @@
   <div class="left-side">
     <div *ngIf="showLoginForm">
       <h1>Login</h1>
-      <form (ngSubmit)="onLoginSubmit()">
+      <form
+        (ngSubmit)="onLoginSubmit()"
+        [formGroup] = "loginForm"
+      >
         <mat-form-field appearance="fill">
           <mat-label>Email</mat-label>
-          <input matInput type="email" [(ngModel)]="loginData.email" name="loginEmail" required email>
-          <mat-error>
+          <input matInput type="email" name="email" formControlName="email" required email>
+          <mat-error *ngIf="loginForm?.get('email')?.invalid">
             Please enter a valid email address
           </mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="fill">
           <mat-label>Password</mat-label>
-          <input matInput type="password" [(ngModel)]="loginData.password" name="loginPassword" required minlength="6">
-          <mat-error>
+          <input matInput type="password" name="password" formControlName="password">
+          <mat-error *ngIf="loginForm?.get('password')?.invalid">
             Password must be at least 6 characters long
           </mat-error>
         </mat-form-field>
@@ -25,35 +28,38 @@
 
     <div *ngIf="!showLoginForm">
       <h1>Register</h1>
-      <form (ngSubmit)="onRegisterSubmit()">
+      <form
+        (ngSubmit)="onRegisterSubmit()"
+        [formGroup] = "registerForm"
+      >
         <mat-form-field appearance="fill">
           <mat-label>Name</mat-label>
-          <input matInput type="text" [(ngModel)]="registerData.name" name="registerName" required>
-          <mat-error *ngIf="registerData.name === ''">
+          <input matInput type="text" name="name" formControlName="name" required>
+          <mat-error *ngIf="registerForm?.get('name')?.invalid">
             Name is required
           </mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="fill">
           <mat-label>Surname</mat-label>
-          <input matInput type="text" [(ngModel)]="registerData.surname" name="registerSurname" required>
-          <mat-error *ngIf="registerData.surname === ''">
+          <input matInput type="text" name="surname" formControlName="surname" required>
+          <mat-error *ngIf="registerForm?.get('surname')?.invalid">
             Surname is required
           </mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="fill">
           <mat-label>Email</mat-label>
-          <input matInput type="email" [(ngModel)]="registerData.email" name="registerEmail" required email>
-          <mat-error>
+          <input matInput type="email" name="registerEmail" formControlName="email" required email>
+          <mat-error *ngIf="registerForm?.get('email')?.invalid">
             Please enter a valid email address
           </mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="fill">
           <mat-label>Password</mat-label>
-          <input matInput type="password" [(ngModel)]="registerData.password" name="registerPassword" required minlength="6">
-          <mat-error>
+          <input matInput type="password" name="registerPassword" formControlName="password">
+          <mat-error *ngIf="registerForm?.get('password')?.invalid">
             Password must be at least 6 characters long
           </mat-error>
         </mat-form-field>

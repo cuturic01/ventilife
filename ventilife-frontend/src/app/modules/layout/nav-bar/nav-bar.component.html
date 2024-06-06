@@ -6,9 +6,11 @@
       </button>
     </div>
     <span class="flexExpand"></span>
-<!--    <div *ngIf="role === null">-->
-    <div>
+    <div *ngIf="user === null">
       <button class="nav_bar_button" mat-button (click)="login()"> Login / Register </button>
+    </div>
+    <div *ngIf="user !== null">
+      <button class="nav_bar_button" mat-button (click)="logout()"> Logout </button>
     </div>
 
   </mat-toolbar-row>
