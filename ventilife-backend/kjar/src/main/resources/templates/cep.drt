@@ -72,7 +72,7 @@ rule "change event control variable 1"
         $patient: Patient($id: id, respiratorMode == "SIMV" || respiratorMode == "KMV_AC", volumeControlled == true)
         $record: ChangeRecord(patientId == $id)
         $change: ChangeEvent(
-            $id == patientId, // ovde templejti
+            $id == patientId,
             deltaPO2 <= @{deltaPO2Threshold} ||
             deltaPCO2 >= @{deltaPCO2Threshold} ||
             deltaParticipationPercentage <= @{deltaParticipationPercentageThreshold}
@@ -133,7 +133,7 @@ rule "change FiO2"
         )
         $record: ChangeRecord(patientId == $id)
         $change: ChangeEvent(
-            $id == patientId, // ovde templejti
+            $id == patientId,
             deltaPO2 <= @{deltaPO2Threshold} ||
             deltaPCO2 >= @{deltaPCO2Threshold} ||
             deltaParticipationPercentage <= @{deltaParticipationPercentageThreshold}
@@ -164,7 +164,7 @@ rule "change FiO2 cap"
         )
         $record: ChangeRecord(patientId == $id)
         $change: ChangeEvent(
-            $id == patientId, // ovde templejti
+            $id == patientId,
             deltaPO2 <= @{deltaPO2Threshold} ||
             deltaPCO2 >= @{deltaPCO2Threshold} ||
             deltaParticipationPercentage <= @{deltaParticipationPercentageThreshold}
@@ -221,7 +221,7 @@ rule "get better cap"
         )
         $record: ChangeRecord(patientId == $id)
         $change: ChangeEvent(
-            $id == patientId, // ovde templejti
+            $id == patientId,
             deltaPO2 > @{deltaPO2Threshold} ||
             deltaPCO2 < @{deltaPCO2Threshold} ||
             deltaParticipationPercentage > @{deltaParticipationPercentageThreshold}

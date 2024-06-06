@@ -9,7 +9,6 @@ rule "change mode worse"
         $patient: Patient(FiO2 >= 75)
         $changeRecord: ChangeRecord(patientId == $patient.getId())
     then
-        System.out.println("1");
         modify($patient){
             setRespiratorMode($changeRecord.getChosenMode()),
             setFiO2(25.0)
@@ -23,7 +22,6 @@ rule "change mode better"
         $patient: Patient(FiO2 <= 25)
         $changeRecord: ChangeRecord(patientId == $patient.getId())
     then
-        System.out.println("2");
         modify($patient){
             setRespiratorMode($changeRecord.getChosenMode()),
             setFiO2(75.0)

@@ -4,12 +4,22 @@ dialect  "mvel"
 import com.ftn.sbnz.model.models.Patient
 import com.ftn.sbnz.model.models.ChangeRecord
 
-rule "intubate"
+rule "intubate 1"
     when
-        $p: Patient(respiratorMode == "APRV", FiO2 >= 75)
+        $p: Patient(respiratorMode == "APRV")
         ChangeRecord(patientId == $p.getId(), deltaPO2 < -2)
     then
-        modify($p){
+        modify($p) {
+            setConscious(false)
+        }
+end
+
+rule "intubate 2"
+    when
+        $p: Patient(respiratorMode == "SIMV")
+        ChangeRecord(patientId == $p.getId(), deltaPO2 < -2)
+    then
+        modify($p) {
             setConscious(false)
         }
 end
@@ -19,7 +29,7 @@ when
         $p: Patient(respiratorMode == "APRV")
         ChangeRecord(patientId == $p.getId(), deltaPO2 > -2)
     then
-        modify($p){
+        modify($p) {
             setConscious(true)
         }
 end
@@ -27,9 +37,9 @@ end
 rule "regain of consciussness 2"
     when
         $p: Patient(respiratorMode == "SIMV")
-        ChangeRecord(patientId == $p.getId(), deltaPO2 > 0)
+        ChangeRecord(patientId == $p.getId(), deltaPO2 > -2)
     then
-        modify($p){
+        modify($p) {
             setConscious(true)
         }
 end
