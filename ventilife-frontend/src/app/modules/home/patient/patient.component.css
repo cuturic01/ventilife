@@ -25,9 +25,14 @@
   gap: 20px;
 }
 
-#action-buttons {
+#action-buttons, #change-mode-container {
   display: flex;
   gap: 10px;
+  align-items: center;
+}
+
+#change-mode-container {
+  gap: 30px;
 }
 
 .action-button{

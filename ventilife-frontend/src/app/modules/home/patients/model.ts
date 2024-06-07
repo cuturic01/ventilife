@@ -113,3 +113,10 @@ export interface PatientData {
   respiratorDecision: RespiratorDecision;
 }
 
+export interface ModeMessage {
+  patientId: string;
+  modeConfirmation: string;
+  recommendedMode: string;
+}
+
+

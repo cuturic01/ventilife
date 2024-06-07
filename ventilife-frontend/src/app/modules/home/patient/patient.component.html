@@ -38,7 +38,14 @@
       <button class="action-button" (click)="getBetter(patient)"> Get Better </button>
       <button class="action-button" (click)="getWorse(patient)"> Get Worse </button>
       <button class="action-button" (click)="badInhalation(patient)"> Bad Inhalation </button>
-      <button class="action-button" (click)="changeMode(patient)"> Change Mode </button>
+    </div>
+    <div id="change-mode-container">
+      <mat-radio-group aria-label="Select a mode" [(ngModel)]="selectedMode">
+        <mat-radio-button *ngFor="let mode of modes" [value]="mode" style="font-size: xx-large !important; margin-right: 15px;">
+          {{ mode }}
+        </mat-radio-button>
+      </mat-radio-group>
+      <button class="action-button" (click)="changeMode(patient, selectedMode)"> Change Mode </button>
     </div>
   </div>
 </div>

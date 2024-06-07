@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {Patient, PatientData} from "./model";
+import {ModeMessage, Patient, PatientData} from "./model";
 import {environment} from "../../../../environments/environment";
 
 @Injectable({
@@ -37,6 +37,10 @@ export class PatientService {
 
   getMaxPCO2(): Observable<Patient> {
     return this.http.get<Patient>(environment.apiHost + "simulation/get-max-pCO2")
+  }
+
+  changeMode(patientId: string, mode: string): Observable<ModeMessage> {
+    return this.http.get<ModeMessage>(environment.apiHost + "simulation/change-mode/" + patientId + "/" + mode)
   }
 
 

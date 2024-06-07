@@ -135,7 +135,6 @@ public class SimulationService {
 		return patient;
 	}
 
-	// TODO: momenat prebacivanja moda treba da ima potvrdu
 	public ModeMessage changeMode(String patientId, String mode) {
 		Patient patient = patients
 				.stream()
