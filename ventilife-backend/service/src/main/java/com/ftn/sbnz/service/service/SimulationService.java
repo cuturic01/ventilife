@@ -6,9 +6,8 @@ import com.ftn.sbnz.model.events.ChangeEvent;
 import com.ftn.sbnz.model.events.InhaleEvent;
 import com.ftn.sbnz.model.models.*;
 import com.ftn.sbnz.service.dto.PatientDataDTO;
-import com.ftn.sbnz.service.util.ResponseMessage;
+import com.ftn.sbnz.service.dto.PatientResponseDTO;
 import org.drools.template.ObjectDataCompiler;
-import org.kie.api.KieServices;
 import org.kie.api.builder.Message;
 import org.kie.api.builder.Results;
 import org.kie.api.io.ResourceType;
@@ -42,6 +41,7 @@ public class SimulationService {
 			List<StablePatientParams> stablePatientParamsList,
 			List<ChangeRecord> changeRecords,
 			List<RespiratorDecision> respiratorDecisions
+
 	) {
 		this.kieContainer = kieContainer;
 		this.patients = patients;
@@ -99,7 +99,7 @@ public class SimulationService {
 			patient.setRespiratorMode("CPAP");
 	}
 
-	public Patient changePatientState(String name, String command) throws JsonProcessingException {
+	public PatientResponseDTO changePatientState(String name, String command) throws JsonProcessingException {
 		String url = "http://localhost:5000/get-" + command + "/" + name;
 		RestTemplate restTemplate = new RestTemplate();
 		String response = restTemplate.getForObject(url, String.class);
@@ -118,8 +118,9 @@ public class SimulationService {
 		System.out.println(patient);
 		ModeMessage modeMessage = new ModeMessage();
 		modeMessage.setPatientId(patient.getId());
+		ResponseMessage responseMessage = new ResponseMessage();
 
-		KieSession cepKieSession = createCepChangeKieSession(patient, changeRecord, changeEvent);
+		KieSession cepKieSession = createCepChangeKieSession(patient, changeRecord, changeEvent, responseMessage);
 		cepKieSession.fireAllRules();
 
 		KieSession forwardKieSession = createForwardKieSession(patient, changeRecord);
@@ -132,7 +133,7 @@ public class SimulationService {
 
 		processModeMessage(modeMessage);
 
-		return patient;
+		return new PatientResponseDTO(patient, responseMessage, changeRecord);
 	}
 
 	public ModeMessage changeMode(String patientId, String mode) {
@@ -159,7 +160,7 @@ public class SimulationService {
 		return modeMessage;
 	}
 
-	public Patient badInhalation(String name) throws JsonProcessingException {
+	public PatientResponseDTO badInhalation(String name) throws JsonProcessingException {
 		String url = "http://localhost:5000/inhale-event/" + name;
 		RestTemplate restTemplate = new RestTemplate();
 		String response = restTemplate.getForObject(url, String.class);
@@ -169,9 +170,10 @@ public class SimulationService {
 				.filter(p -> Objects.equals(p.getId().toString(), inhaleEvent.getPatientId().toString()))
 				.findAny()
 				.orElse(null);
-		KieSession kieSession = createCepInhalationKieSession(patient, inhaleEvent);
+		ResponseMessage responseMessage = new ResponseMessage();
+		KieSession kieSession = createCepInhalationKieSession(patient, inhaleEvent, responseMessage);
 		kieSession.fireAllRules();
-		return patient;
+		return new PatientResponseDTO(patient, responseMessage, null);
 	}
 
 
@@ -210,7 +212,7 @@ public class SimulationService {
 		return kieSession;
 	}
 
-	private KieSession createCepChangeKieSession(Patient patient, ChangeRecord changeRecord, ChangeEvent changeEvent) {
+	private KieSession createCepChangeKieSession(Patient patient, ChangeRecord changeRecord, ChangeEvent changeEvent, ResponseMessage responseMessage) {
 		InputStream template = SimulationService.class.getResourceAsStream("/templates/cep.drt");
 		List<Thresholds> data = new ArrayList<>();
 		data.add(new Thresholds(-0.4, 0.3, -7.5));
@@ -222,11 +224,13 @@ public class SimulationService {
 		kieSession.insert(patient);
 		kieSession.insert(changeRecord);
 		kieSession.insert(changeEvent);
+		kieSession.insert(responseMessage);
 		return kieSession;
 	}
 
-	private KieSession createCepInhalationKieSession(Patient patient, InhaleEvent inhaleEvent) {
+	private KieSession createCepInhalationKieSession(Patient patient, InhaleEvent inhaleEvent, ResponseMessage responseMessage) {
 		KieSession kieSessionCep = kieContainer.newKieSession("cepKsession");
+		kieSessionCep.insert(responseMessage);
 		kieSessionCep.insert(patient);
 		kieSessionCep.insert(inhaleEvent);
 		return kieSessionCep;

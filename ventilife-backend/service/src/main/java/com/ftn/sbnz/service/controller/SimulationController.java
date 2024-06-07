@@ -5,9 +5,9 @@ import com.ftn.sbnz.model.models.ModeMessage;
 import com.ftn.sbnz.model.models.Patient;
 import com.ftn.sbnz.model.models.RespiratorDecision;
 import com.ftn.sbnz.service.dto.PatientDataDTO;
+import com.ftn.sbnz.service.dto.PatientResponseDTO;
 import com.ftn.sbnz.service.service.SimulationService;
-import com.ftn.sbnz.service.util.ResponseMessage;
-import com.ftn.sbnz.service.util.Scenario;
+import com.ftn.sbnz.model.models.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,15 +44,13 @@ public class SimulationController {
 	}
 
 	@GetMapping(value = "/get-worse/{name}")
-	public ResponseEntity<Patient> getWorse(@PathVariable String name) throws JsonProcessingException {
-		Patient patient = simulationService.changePatientState(name, "worse");
-		return ResponseEntity.ok(patient);
+	public ResponseEntity<PatientResponseDTO> getWorse(@PathVariable String name) throws JsonProcessingException {
+		return ResponseEntity.ok(simulationService.changePatientState(name, "worse"));
 	}
 
 	@GetMapping(value = "/get-better/{name}")
-	public ResponseEntity<Patient> getBetter(@PathVariable String name) throws JsonProcessingException {
-		Patient patient = simulationService.changePatientState(name, "better");
-		return ResponseEntity.ok(patient);
+	public ResponseEntity<PatientResponseDTO> getBetter(@PathVariable String name) throws JsonProcessingException {
+		return ResponseEntity.ok(simulationService.changePatientState(name, "better"));
 	}
 
 	@GetMapping(value = "/change-mode/{patientId}/{mode}")
@@ -61,9 +59,8 @@ public class SimulationController {
 	}
 
 	@GetMapping(value = "/bad-inhalation/{name}")
-	public ResponseEntity<Patient> badInhalation(@PathVariable String name) throws JsonProcessingException {
-		Patient patient = simulationService.badInhalation(name);
-		return ResponseEntity.ok(patient);
+	public ResponseEntity<PatientResponseDTO> badInhalation(@PathVariable String name) throws JsonProcessingException {
+		return ResponseEntity.ok(simulationService.badInhalation(name));
 	}
 
 	@PreAuthorize("hasRole('USER')")
