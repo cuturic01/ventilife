@@ -4,12 +4,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ftn.sbnz.model.models.ModeMessage;
 import com.ftn.sbnz.model.models.Patient;
 import com.ftn.sbnz.model.models.RespiratorDecision;
+import com.ftn.sbnz.service.dto.PatientDataDTO;
 import com.ftn.sbnz.service.service.SimulationService;
 import com.ftn.sbnz.service.util.ResponseMessage;
 import com.ftn.sbnz.service.util.Scenario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 
 @RestController
@@ -56,9 +61,9 @@ public class SimulationController {
 	}
 
 	@GetMapping(value = "/bad-inhalation/{name}")
-	public ResponseEntity<ResponseMessage> badInhalation(@PathVariable String name) throws JsonProcessingException {
-		simulationService.badInhalation(name);
-		return ResponseEntity.ok(new ResponseMessage("Bad inhalation."));
+	public ResponseEntity<Patient> badInhalation(@PathVariable String name) throws JsonProcessingException {
+		Patient patient = simulationService.badInhalation(name);
+		return ResponseEntity.ok(patient);
 	}
 
 	@GetMapping(value = "/get-min-pO2")
@@ -70,6 +75,17 @@ public class SimulationController {
 	public ResponseEntity<Patient> getMaxPCO2() {
 		return ResponseEntity.ok(simulationService.getMaxPCO2());
 
+	}
+
+	@GetMapping(value = "/patient-data/{id}")
+	public ResponseEntity<PatientDataDTO> getPatientData(@PathVariable UUID id) {
+		return ResponseEntity.ok(simulationService.getPatientData(id));
+	}
+
+	@PreAuthorize("hasRole('USER')")
+	@GetMapping(value = "/patients-data")
+	public ResponseEntity<List<PatientDataDTO>> getPatientsData() {
+		return ResponseEntity.ok(simulationService.getPatientsData());
 	}
 
 }

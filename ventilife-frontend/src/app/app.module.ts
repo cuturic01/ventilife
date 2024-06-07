@@ -9,7 +9,8 @@ import {AuthModule} from "./modules/auth/auth.module";
 import {LayoutModule} from "./modules/layout/layout.module";
 import {MatDialogModule} from "@angular/material/dialog";
 import {DialogComponent} from "./modules/auth/dialog/dialog.component";
-import {HttpClientModule} from "@angular/common/http";
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
+import {TokenInterceptor} from "./modules/auth/tokenInterceptor";
 
 @NgModule({
   declarations: [
@@ -27,7 +28,13 @@ import {HttpClientModule} from "@angular/common/http";
     MatDialogModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true,
+    }
+  ],
   bootstrap: []
 })
 export class AppModule { }

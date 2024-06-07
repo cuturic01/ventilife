@@ -1,0 +1,52 @@
+#patient-container {
+  padding: 20px;
+  width: calc(100vw - 60px);
+  display: flex;
+  gap: 20px;
+}
+
+#patient-data, #right-container {
+  width: 50%;
+}
+
+#patient-data, #stable-parameters-container, #change-record-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background-color: rgba(245, 245, 245, 0.85);
+  padding: 10px 20px;
+  border-radius: 10px;
+  box-shadow: 2px 5px 5px #1A1A1A;
+}
+
+#right-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+#action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.action-button{
+  background-color: #012622;
+  color: #F5F5F5 !important;
+  border-radius: 10px;
+  border: none;
+  font-size: 24px;
+  min-width: 160px;
+  max-width: 200px;
+  padding: 20px 20px;
+  position: relative;
+  z-index: 3;
+}
+
+.action-button:hover {
+  cursor: pointer;
+  scale: 1.05;
+  transition: scale 1s;
+}
+
+
