@@ -3,12 +3,14 @@ import {FormsModule} from "@angular/forms";
 import patients, {ChangeRecord, PatientData, StablePatientParams} from "../patients/model";
 import {ActivatedRoute} from "@angular/router";
 import {PatientService} from "../patients/patient.service";
+import {DecimalPipe} from "@angular/common";
 
 @Component({
   selector: 'app-patient',
   standalone: true,
   imports: [
-    FormsModule
+    FormsModule,
+    DecimalPipe
   ],
   templateUrl: './patient.component.html',
   styleUrl: './patient.component.css'

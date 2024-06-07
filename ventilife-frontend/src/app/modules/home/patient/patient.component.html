@@ -3,19 +3,18 @@
     <h1>{{patient?.patient.name}}</h1>
     <h2>Weight: {{patient?.patient.weight}}kg</h2>
     <h2>Conscious: {{patient?.patient.conscious}}</h2>
-    <h2>pO2: {{patient?.patient.pO2}}</h2>
-    <h2>pCO2: {{patient?.patient.pCO2}}</h2>
-    <h2>Participation: {{patient?.patient.participationPercentage}}%</h2>
+    <h2>pO2: {{patient?.patient.pO2 | number:'1.3-3'}}</h2>
+    <h2>pCO2: {{patient?.patient.pCO2 | number:'1.3-3'}}</h2>
+    <h2>Participation: {{patient?.patient.participationPercentage | number:'1.3-3'}}%</h2>
     <h2>Tidal Volume: {{patient?.patient.tidalVolume}}</h2>
     <h2>Frequency: {{patient?.patient.frequency}}</h2>
     <h2>Minute Volume: {{patient?.patient.minuteVolume}}</h2>
     <h2>Pressure: {{patient?.patient.pressure}}</h2>
-    <h2>Resistance: {{patient?.patient.resistance}}</h2>
-    <h2>Gas Flow: {{patient?.patient.gasFlow}}</h2>
-    <h2>Compliance: {{patient?.patient.compliance}}</h2>
-    <h2>FiO2: {{patient?.patient.FiO2}}</h2>
+    <h2>Resistance: {{patient?.patient.resistance | number:'1.3-3'}}</h2>
+    <h2>Gas Flow: {{patient?.patient.gasFlow | number:'1.3-3'}}</h2>
+    <h2>Compliance: {{patient?.patient.compliance | number:'1.3-3'}}</h2>
+    <h2>FiO2: {{patient?.patient.fiO2}}%</h2>
     <h2>Respirator Mode: {{patient?.patient.respiratorMode}}</h2>
-    <h2>Volume Controlled: {{patient?.patient.volumeControlled}}</h2>
 
   </div>
   <div id="right-container">
@@ -23,15 +22,15 @@
       <h1>Stable Patient Parameters</h1>
       <h2>Tidal Volume: {{patient?.stablePatientParams.tidalVolume}}</h2>
       <h2>Minute Volume: {{patient?.stablePatientParams.minuteVolume}}</h2>
-      <h2>Pressure: {{patient?.stablePatientParams.pressure}}</h2>
-      <h2>Gas Flow: {{patient?.stablePatientParams.gasFlow}}</h2>
+      <h2>Pressure: {{patient?.stablePatientParams.pressure | number:'1.3-3'}}</h2>
+      <h2>Gas Flow: {{patient?.stablePatientParams.gasFlow | number:'1.3-3'}}</h2>
     </div>
 
     <div id="change-record-container">
       <h1>Change Record</h1>
-      <h2>Delta pO2: {{patient?.changeRecord.deltaPO2}}</h2>
-      <h2>Delta pCO2: {{patient?.changeRecord.deltaPCO2}}</h2>
-      <h2>Participation: {{patient?.changeRecord.participationPercentage}}%</h2>
+      <h2>Delta pO2: {{patient?.changeRecord.deltaPO2 | number:'1.3-3'}}</h2>
+      <h2>Delta pCO2: {{patient?.changeRecord.deltaPCO2 | number:'1.3-3'}}</h2>
+      <h2>Participation: {{patient?.changeRecord.participationPercentage | number:'1.3-3'}}%</h2>
       <h2>Chosen Mode: {{patient?.changeRecord.chosenMode}}</h2>
     </div>
 

@@ -1,12 +1,12 @@
 <div id="patients-overview-container">
   <div id="patients-cards-container">
     <div class="patient-card" *ngFor="let patient of patients" (click)="openPatientDetails(patient)">
-      <h2>{{patient.patient.name}}</h2>
-      <h3>Weight: {{patient.patient.weight}}kg</h3>
-      <h3>Conscious: {{patient.patient.conscious}}</h3>
-      <h3>pO2: {{patient.patient.pO2}}</h3>
-      <h3>pCO2: {{patient.patient.pCO2}}</h3>
-      <h3>{{patient.respiratorDecision.finalDecision}}</h3>
+      <h1>{{patient.patient.name}}</h1>
+      <h2>Weight: {{patient.patient.weight}}kg</h2>
+      <h2>Conscious: {{patient.patient.conscious}}</h2>
+      <h2>pO2: {{patient.patient.pO2 | number:'1.3-3'}}</h2>
+      <h2>pCO2: {{patient.patient.pCO2 | number:'1.3-3'}}</h2>
+      <h2>{{ patient.respiratorDecision.finalDecision ? 'Patient must be put on a respirator.' : 'Patient does not need a respirator.' }}</h2>
     </div>
   </div>
 </div>

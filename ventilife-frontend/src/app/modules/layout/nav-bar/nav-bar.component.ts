@@ -55,4 +55,8 @@ export class NavBarComponent implements OnInit{
   patients() {
     this.router.navigate(['patients']);
   }
+
+  reports() {
+    this.router.navigate(['reports']);
+  }
 }

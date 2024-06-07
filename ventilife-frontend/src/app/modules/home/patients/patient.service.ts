@@ -31,5 +31,13 @@ export class PatientService {
     return this.http.get<Patient>(environment.apiHost + "simulation/bad-inhalation/" + name)
   }
 
+  getMinPO2(): Observable<Patient> {
+    return this.http.get<Patient>(environment.apiHost + "simulation/get-min-pO2")
+  }
+
+  getMaxPCO2(): Observable<Patient> {
+    return this.http.get<Patient>(environment.apiHost + "simulation/get-max-pCO2")
+  }
+
 
 }

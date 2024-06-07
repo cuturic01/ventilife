@@ -1,0 +1,16 @@
+#reports-container {
+  padding: 20px;
+  width: calc(100vw - 60px);
+  display: flex;
+  gap: 20px;
+}
+
+#min-pO2-container, #max-pCO2-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background-color: rgba(245, 245, 245, 0.85);
+  padding: 10px 20px;
+  border-radius: 10px;
+  box-shadow: 2px 5px 5px #1A1A1A;
+}

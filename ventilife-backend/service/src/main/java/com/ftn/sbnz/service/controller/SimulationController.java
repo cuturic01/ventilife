@@ -66,11 +66,13 @@ public class SimulationController {
 		return ResponseEntity.ok(patient);
 	}
 
+	@PreAuthorize("hasRole('USER')")
 	@GetMapping(value = "/get-min-pO2")
 	public ResponseEntity<Patient> getMinPO2() {
 		return ResponseEntity.ok(simulationService.getMinPO2());
 	}
 
+	@PreAuthorize("hasRole('USER')")
 	@GetMapping(value = "/get-max-pCO2")
 	public ResponseEntity<Patient> getMaxPCO2() {
 		return ResponseEntity.ok(simulationService.getMaxPCO2());

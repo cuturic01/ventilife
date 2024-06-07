@@ -13,7 +13,7 @@ export interface Patient {
   resistance: number;
   gasFlow: number;
   compliance: number;
-  FiO2: number;
+  fiO2: number;
   respiratorMode: string;
   volumeControlled: boolean;
 }
@@ -34,7 +34,7 @@ const patients: Patient[] = [
     resistance: 5.0,
     gasFlow: 40.0,
     compliance: 0.05,
-    FiO2: 0.21,
+    fiO2: 0.21,
     respiratorMode: 'SIMV',
     volumeControlled: true
   },
@@ -53,7 +53,7 @@ const patients: Patient[] = [
     resistance: 4.5,
     gasFlow: 38.0,
     compliance: 0.04,
-    FiO2: 0.30,
+    fiO2: 0.30,
     respiratorMode: 'SIMV',
     volumeControlled: false
   },
@@ -72,7 +72,7 @@ const patients: Patient[] = [
     resistance: 5.5,
     gasFlow: 42.0,
     compliance: 0.06,
-    FiO2: 0.25,
+    fiO2: 0.25,
     respiratorMode: 'SIMV',
     volumeControlled: true
   }

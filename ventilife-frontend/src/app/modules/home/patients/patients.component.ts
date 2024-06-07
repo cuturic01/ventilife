@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {PatientData} from "./model";
-import {NgForOf} from "@angular/common";
+import {DecimalPipe, NgForOf} from "@angular/common";
 import {PatientService} from "./patient.service";
 import {Router} from "@angular/router";
 
@@ -8,7 +8,8 @@ import {Router} from "@angular/router";
   selector: 'app-patients',
   standalone: true,
   imports: [
-    NgForOf
+    NgForOf,
+    DecimalPipe
   ],
   templateUrl: './patients.component.html',
   styleUrl: './patients.component.css'
