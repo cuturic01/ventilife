@@ -119,4 +119,14 @@ export interface ModeMessage {
   recommendedMode: string;
 }
 
+export interface ResponseMessage {
+  message: string;
+}
+
+export interface PatientResponse {
+  patient: Patient;
+  responseMessage: ResponseMessage;
+  changeRecord: ChangeRecord
+}
+
 

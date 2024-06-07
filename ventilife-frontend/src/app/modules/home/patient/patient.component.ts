@@ -39,7 +39,13 @@ export class PatientComponent implements OnInit{
     let name = patientData.patient.name.split(' ').map(word => word.toLowerCase())[0];
     this.patientService.getBetter(name).subscribe({
       next: (result) => {
-        this.patient.patient = result;
+        this.patient.patient = result.patient;
+        this.patient.changeRecord = result.changeRecord;
+        this.snackBar.open(result.responseMessage.message, "OK", {
+          duration: 10000,
+          horizontalPosition: "end",
+          panelClass: ['green-snackbar']
+        });
       }
     })
   }
@@ -48,7 +54,13 @@ export class PatientComponent implements OnInit{
     let name = patientData.patient.name.split(' ').map(word => word.toLowerCase())[0];
     this.patientService.getWorse(name).subscribe({
       next: (result) => {
-        this.patient.patient = result;
+        this.patient.patient = result.patient;
+        this.patient.changeRecord = result.changeRecord;
+        this.snackBar.open(result.responseMessage.message, "OK", {
+          duration: 10000,
+          horizontalPosition: "end",
+          panelClass: ['green-snackbar']
+        });
       }
     })
   }
@@ -57,7 +69,12 @@ export class PatientComponent implements OnInit{
     let name = patientData.patient.name.split(' ').map(word => word.toLowerCase())[0];
     this.patientService.badInhalation(name).subscribe({
       next: (result) => {
-        this.patient.patient = result;
+        this.patient.patient = result.patient;
+        this.snackBar.open(result.responseMessage.message, "OK", {
+          duration: 10000,
+          horizontalPosition: "end",
+          panelClass: ['green-snackbar']
+        });
       }
     })
   }
