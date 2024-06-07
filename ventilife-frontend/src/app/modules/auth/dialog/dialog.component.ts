@@ -48,18 +48,6 @@ export class DialogComponent implements OnInit{
     password: new FormControl('', [Validators.minLength(6), Validators.required]),
   });
 
-  // loginData = {
-  //   email: '',
-  //   password: ''
-  // };
-
-  // registerData = {
-  //   name: '',
-  //   surname: '',
-  //   email: '',
-  //   password: ''
-  // };
-
   onLoginSubmit() {
     let email = this.loginForm.value.email;
     let password = this.loginForm.value.password;

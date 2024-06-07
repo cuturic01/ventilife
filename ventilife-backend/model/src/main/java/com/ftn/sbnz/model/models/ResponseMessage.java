@@ -1,7 +1,10 @@
-package com.ftn.sbnz.service.util;
+package com.ftn.sbnz.model.models;
 
 public class ResponseMessage {
     String message;
+
+    public ResponseMessage() {
+    }
 
     public ResponseMessage(String message) {
         this.message = message;

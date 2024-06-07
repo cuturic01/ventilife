@@ -2,10 +2,18 @@
 
 html, body {
   height: 100%;
-  background-color: #1B2223;
+  background-color: #26A96C;
   justify-content: center;
 }
 
 html, body { height: 100%; }
 body { margin: 0; padding-top: 20px; overflow-y: hidden; font-family: 'Poppins', sans-serif; }
 h1, h2, h3 {margin: 0}
+
+.mat-mdc-snack-bar-container.green-snackbar {
+  --mdc-snackbar-container-color: #012622;
+  --mat-mdc-snack-bar-button-color: #FFFFFF;
+  --mdc-snackbar-supporting-text-color: #FFFFFF;
+  --mdc-snackbar-supporting-text-size: 24px;
+  --mdc-snackbar-supporting-text-line-height: 50px;
+}

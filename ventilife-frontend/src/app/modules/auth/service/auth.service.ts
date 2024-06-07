@@ -11,15 +11,11 @@ import {DOCUMENT, isPlatformBrowser} from "@angular/common";
 })
 export class AuthService {
 
-  private headers = new HttpHeaders({
-    'Content-Type': 'application/json',
-    skip: 'true',
-  });
-
   userLogged$ = new BehaviorSubject<any>(null);
   userLoggedState$ = this.userLogged$.asObservable();
 
   constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: any) {
+    this.userLogged$.next(this.getRole());
   }
 
   login(credentials: LoginCredentials): Observable<string>{

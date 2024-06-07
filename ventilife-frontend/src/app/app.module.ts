@@ -9,7 +9,10 @@ import {AuthModule} from "./modules/auth/auth.module";
 import {LayoutModule} from "./modules/layout/layout.module";
 import {MatDialogModule} from "@angular/material/dialog";
 import {DialogComponent} from "./modules/auth/dialog/dialog.component";
-import {HttpClientModule} from "@angular/common/http";
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
+import {TokenInterceptor} from "./modules/auth/tokenInterceptor";
+import { NotifierModule } from 'angular-notifier';
+
 
 @NgModule({
   declarations: [
@@ -25,9 +28,33 @@ import {HttpClientModule} from "@angular/common/http";
     HomeModule,
     LayoutModule,
     MatDialogModule,
-    HttpClientModule
+    HttpClientModule,
+    NotifierModule.withConfig({
+      position: {
+        horizontal: {
+          position: 'right',
+        },
+        vertical: {
+          position: 'bottom',
+        },
+      },
+      behaviour: {
+        autoHide: false,
+        onClick: false,
+        onMouseover: 'pauseAutoHide',
+        showDismissButton: true,
+        stacking: 3
+
+      }
+    })
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true,
+    }
+  ],
   bootstrap: []
 })
 export class AppModule { }

@@ -5,6 +5,7 @@ import {MatToolbar, MatToolbarRow} from "@angular/material/toolbar";
 import {MatDialog} from "@angular/material/dialog";
 import {DialogComponent} from "../../auth/dialog/dialog.component";
 import {NgIf} from "@angular/common";
+import {MatButton} from "@angular/material/button";
 
 @Component({
   selector: 'app-nav-bar',
@@ -12,7 +13,8 @@ import {NgIf} from "@angular/common";
   imports: [
     MatToolbarRow,
     MatToolbar,
-    NgIf
+    NgIf,
+    MatButton
   ],
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.css'
@@ -48,5 +50,13 @@ export class NavBarComponent implements OnInit{
   logout() {
     this.authService.logout();
     this.router.navigate(['home']);
+  }
+
+  patients() {
+    this.router.navigate(['patients']);
+  }
+
+  reports() {
+    this.router.navigate(['reports']);
   }
 }

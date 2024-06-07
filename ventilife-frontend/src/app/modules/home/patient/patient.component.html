@@ -1,0 +1,51 @@
+<div id="patient-container">
+  <div id="patient-data">
+    <h1>{{patient?.patient.name}}</h1>
+    <h2>Weight: {{patient?.patient.weight}}kg</h2>
+    <h2>Conscious: {{patient?.patient.conscious}}</h2>
+    <h2>pO2: {{patient?.patient.pO2 | number:'1.3-3'}}</h2>
+    <h2>pCO2: {{patient?.patient.pCO2 | number:'1.3-3'}}</h2>
+    <h2>Participation: {{patient?.patient.participationPercentage | number:'1.3-3'}}%</h2>
+    <h2>Tidal Volume: {{patient?.patient.tidalVolume}}</h2>
+    <h2>Frequency: {{patient?.patient.frequency}}</h2>
+    <h2>Minute Volume: {{patient?.patient.minuteVolume}}</h2>
+    <h2>Pressure: {{patient?.patient.pressure}}</h2>
+    <h2>Resistance: {{patient?.patient.resistance | number:'1.3-3'}}</h2>
+    <h2>Gas Flow: {{patient?.patient.gasFlow | number:'1.3-3'}}</h2>
+    <h2>Compliance: {{patient?.patient.compliance | number:'1.3-3'}}</h2>
+    <h2>FiO2: {{patient?.patient.fiO2}}%</h2>
+    <h2>Respirator Mode: {{patient?.patient.respiratorMode}}</h2>
+
+  </div>
+  <div id="right-container">
+    <div id="stable-parameters-container">
+      <h1>Stable Patient Parameters</h1>
+      <h2>Tidal Volume: {{patient?.stablePatientParams.tidalVolume}}</h2>
+      <h2>Minute Volume: {{patient?.stablePatientParams.minuteVolume}}</h2>
+      <h2>Pressure: {{patient?.stablePatientParams.pressure | number:'1.3-3'}}</h2>
+      <h2>Gas Flow: {{patient?.stablePatientParams.gasFlow | number:'1.3-3'}}</h2>
+    </div>
+
+    <div id="change-record-container">
+      <h1>Change Record</h1>
+      <h2>Delta pO2: {{patient?.changeRecord.deltaPO2 | number:'1.3-3'}}</h2>
+      <h2>Delta pCO2: {{patient?.changeRecord.deltaPCO2 | number:'1.3-3'}}</h2>
+      <h2>Participation: {{patient?.changeRecord.participationPercentage | number:'1.3-3'}}%</h2>
+      <h2>Chosen Mode: {{patient?.changeRecord.chosenMode}}</h2>
+    </div>
+
+    <div id="action-buttons">
+      <button class="action-button" (click)="getBetter(patient)"> Get Better </button>
+      <button class="action-button" (click)="getWorse(patient)"> Get Worse </button>
+      <button class="action-button" (click)="badInhalation(patient)"> Bad Inhalation </button>
+    </div>
+    <div id="change-mode-container">
+      <mat-radio-group aria-label="Select a mode" [(ngModel)]="selectedMode">
+        <mat-radio-button *ngFor="let mode of modes" [value]="mode" style="font-size: xx-large !important; margin-right: 15px;">
+          {{ mode }}
+        </mat-radio-button>
+      </mat-radio-group>
+      <button class="action-button" (click)="changeMode(patient, selectedMode)"> Change Mode </button>
+    </div>
+  </div>
+</div>

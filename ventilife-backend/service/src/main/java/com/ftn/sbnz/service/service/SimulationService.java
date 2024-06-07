@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftn.sbnz.model.events.ChangeEvent;
 import com.ftn.sbnz.model.events.InhaleEvent;
 import com.ftn.sbnz.model.models.*;
-import com.ftn.sbnz.service.util.ResponseMessage;
+import com.ftn.sbnz.service.dto.PatientDataDTO;
+import com.ftn.sbnz.service.dto.PatientResponseDTO;
 import org.drools.template.ObjectDataCompiler;
-import org.kie.api.KieServices;
 import org.kie.api.builder.Message;
 import org.kie.api.builder.Results;
 import org.kie.api.io.ResourceType;
@@ -30,6 +30,7 @@ public class SimulationService {
 	private List<Patient> patients;
 	private List<StablePatientParams> stablePatientParamsList;
 	private List<ChangeRecord> changeRecords;
+	private List<RespiratorDecision> respiratorDecisions;
 	private ObjectMapper objectMapper;
 
 	@Autowired
@@ -38,13 +39,16 @@ public class SimulationService {
 			List<Patient> patients,
 			ObjectMapper objectMapper,
 			List<StablePatientParams> stablePatientParamsList,
-			List<ChangeRecord> changeRecords
+			List<ChangeRecord> changeRecords,
+			List<RespiratorDecision> respiratorDecisions
+
 	) {
 		this.kieContainer = kieContainer;
 		this.patients = patients;
 		this.objectMapper = objectMapper;
 		this.stablePatientParamsList = stablePatientParamsList;
 		this.changeRecords = changeRecords;
+		this.respiratorDecisions = respiratorDecisions;
 	}
 
 	public RespiratorDecision getRespiratorDecision(Patient patient) {
@@ -90,11 +94,12 @@ public class SimulationService {
 		stablePatientParamsList.add(getStablePatientParams(patient));
 		changeRecords.add(new ChangeRecord(patient.getId(), 0.0, 0.0, 0.0, "CPAP"));
 		RespiratorDecision respiratorDecision = getRespiratorDecision(patient);
+		respiratorDecisions.add(respiratorDecision);
 		if (respiratorDecision.getFinalDecision())
 			patient.setRespiratorMode("CPAP");
 	}
 
-	public Patient changePatientState(String name, String command) throws JsonProcessingException {
+	public PatientResponseDTO changePatientState(String name, String command) throws JsonProcessingException {
 		String url = "http://localhost:5000/get-" + command + "/" + name;
 		RestTemplate restTemplate = new RestTemplate();
 		String response = restTemplate.getForObject(url, String.class);
@@ -113,8 +118,9 @@ public class SimulationService {
 		System.out.println(patient);
 		ModeMessage modeMessage = new ModeMessage();
 		modeMessage.setPatientId(patient.getId());
+		ResponseMessage responseMessage = new ResponseMessage();
 
-		KieSession cepKieSession = createCepChangeKieSession(patient, changeRecord, changeEvent);
+		KieSession cepKieSession = createCepChangeKieSession(patient, changeRecord, changeEvent, responseMessage);
 		cepKieSession.fireAllRules();
 
 		KieSession forwardKieSession = createForwardKieSession(patient, changeRecord);
@@ -127,10 +133,9 @@ public class SimulationService {
 
 		processModeMessage(modeMessage);
 
-		return patient;
+		return new PatientResponseDTO(patient, responseMessage, changeRecord);
 	}
 
-	// TODO: momenat prebacivanja moda treba da ima potvrdu
 	public ModeMessage changeMode(String patientId, String mode) {
 		Patient patient = patients
 				.stream()
@@ -155,7 +160,7 @@ public class SimulationService {
 		return modeMessage;
 	}
 
-	public void badInhalation(String name) throws JsonProcessingException {
+	public PatientResponseDTO badInhalation(String name) throws JsonProcessingException {
 		String url = "http://localhost:5000/inhale-event/" + name;
 		RestTemplate restTemplate = new RestTemplate();
 		String response = restTemplate.getForObject(url, String.class);
@@ -165,8 +170,10 @@ public class SimulationService {
 				.filter(p -> Objects.equals(p.getId().toString(), inhaleEvent.getPatientId().toString()))
 				.findAny()
 				.orElse(null);
-		KieSession kieSession = createCepInhalationKieSession(patient, inhaleEvent);
+		ResponseMessage responseMessage = new ResponseMessage();
+		KieSession kieSession = createCepInhalationKieSession(patient, inhaleEvent, responseMessage);
 		kieSession.fireAllRules();
+		return new PatientResponseDTO(patient, responseMessage, null);
 	}
 
 
@@ -205,7 +212,7 @@ public class SimulationService {
 		return kieSession;
 	}
 
-	private KieSession createCepChangeKieSession(Patient patient, ChangeRecord changeRecord, ChangeEvent changeEvent) {
+	private KieSession createCepChangeKieSession(Patient patient, ChangeRecord changeRecord, ChangeEvent changeEvent, ResponseMessage responseMessage) {
 		InputStream template = SimulationService.class.getResourceAsStream("/templates/cep.drt");
 		List<Thresholds> data = new ArrayList<>();
 		data.add(new Thresholds(-0.4, 0.3, -7.5));
@@ -217,11 +224,13 @@ public class SimulationService {
 		kieSession.insert(patient);
 		kieSession.insert(changeRecord);
 		kieSession.insert(changeEvent);
+		kieSession.insert(responseMessage);
 		return kieSession;
 	}
 
-	private KieSession createCepInhalationKieSession(Patient patient, InhaleEvent inhaleEvent) {
+	private KieSession createCepInhalationKieSession(Patient patient, InhaleEvent inhaleEvent, ResponseMessage responseMessage) {
 		KieSession kieSessionCep = kieContainer.newKieSession("cepKsession");
+		kieSessionCep.insert(responseMessage);
 		kieSessionCep.insert(patient);
 		kieSessionCep.insert(inhaleEvent);
 		return kieSessionCep;
@@ -353,4 +362,75 @@ public class SimulationService {
 			modeMessage.setModeConfirmation("Chosen mode is not appropriate.");
 	}
 
+	public Patient getPatient(UUID id) {
+		for (Patient patient: patients) {
+			if (patient.getId().equals(id)) {
+				return patient;
+			}
+		}
+		return null;
+	}
+
+	public StablePatientParams getStablePatientParams(UUID id) {
+		for (StablePatientParams patient: stablePatientParamsList) {
+			if (patient.getPatientId().equals(id)) {
+				return patient;
+			}
+		}
+		return null;
+	}
+
+	public ChangeRecord getChangeRecord(UUID id) {
+		for (ChangeRecord patient: changeRecords) {
+			if (patient.getPatientId().equals(id)) {
+				return patient;
+			}
+		}
+		return null;
+	}
+
+	public RespiratorDecision getRespiratorDecision(UUID id) {
+		for (RespiratorDecision respiratorDecision: respiratorDecisions) {
+			if (respiratorDecision.getPatientId().equals(id)) {
+				return respiratorDecision;
+			}
+		}
+		return null;
+	}
+
+	public PatientDataDTO getPatientData(UUID id) {
+		Patient patient = getPatient(id);
+		StablePatientParams stablePatientParams = getStablePatientParams(id);
+		ChangeRecord changeRecord = getChangeRecord(id);
+		RespiratorDecision respiratorDecision = getRespiratorDecision(id);
+		return new PatientDataDTO(patient, stablePatientParams, changeRecord, respiratorDecision);
+	}
+
+	public List<PatientDataDTO> getPatientsData() {
+		List<PatientDataDTO> patientDataDTOS = new ArrayList<>();
+		for (Patient patient: patients) {
+			PatientDataDTO patientDataDTO = new PatientDataDTO();
+			patientDataDTO.setPatient(patient);
+			for (StablePatientParams stablePatientParams: stablePatientParamsList) {
+				if (patient.getId().equals(stablePatientParams.getPatientId())) {
+					patientDataDTO.setStablePatientParams(stablePatientParams);
+					break;
+				}
+			}
+			for (ChangeRecord changeRecord: changeRecords) {
+				if (patient.getId().equals(changeRecord.getPatientId())) {
+					patientDataDTO.setChangeRecord(changeRecord);
+					break;
+				}
+			}
+			for (RespiratorDecision respiratorDecision: respiratorDecisions) {
+				if (patient.getId().equals(respiratorDecision.getPatientId())) {
+					patientDataDTO.setRespiratorDecision(respiratorDecision);
+					break;
+				}
+			}
+			patientDataDTOS.add(patientDataDTO);
+		}
+		return patientDataDTOS;
+	}
 }
