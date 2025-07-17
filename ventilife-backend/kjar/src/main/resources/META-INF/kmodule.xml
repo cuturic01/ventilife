@@ -1,0 +1,20 @@
+<kmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://jboss.org/kie/6.0.0/kmodule">
+    <kbase name="bwBase" packages="backward">
+        <ksession name="bwKsession"/>
+    </kbase>
+    <kbase name="cepKbase" eventProcessingMode="stream" packages="cep">
+        <ksession name="cepKsession" clockType="pseudo"/>
+    </kbase>
+    <kbase name="fwKbase" eventProcessingMode="stream" packages="forward">
+        <ksession name="fwKsession" clockType="pseudo"/>
+    </kbase>
+    <kbase name="simple" eventProcessingMode="stream" packages="simple">
+        <ksession name="simpleKsession" clockType="pseudo"/>
+    </kbase>
+    <kbase name="query" eventProcessingMode="stream" packages="query">
+        <ksession name="queryKsession" clockType="pseudo"/>
+    </kbase>
+    <kbase name="template-KBase" packages="templates">
+        <ksession name="templateSimpleKsession"/>
+    </kbase>
+</kmodule>

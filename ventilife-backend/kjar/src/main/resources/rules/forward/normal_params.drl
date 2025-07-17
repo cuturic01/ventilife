@@ -1,0 +1,55 @@
+package rules.forward;
+dialect  "mvel"
+
+import com.ftn.sbnz.model.models.Patient
+import com.ftn.sbnz.model.models.StablePatientParams
+
+rule "tidal volume calculation"
+    no-loop
+    when
+        $p: Patient()
+        $sp: StablePatientParams(patientId == $p.getId(), tidalVolume == null)
+    then
+        modify($sp){
+            setTidalVolume(6 * $p.getWeight())
+        };
+        System.out.println("Tidal volume calculated: " + $sp.getTidalVolume());
+end
+
+rule "minute volume calculation"
+    no-loop
+    when
+      $p: Patient()
+      $sp: StablePatientParams(patientId == $p.getId(), tidalVolume != null, minuteVolume == null)
+    then
+      modify($sp){
+          setMinuteVolume(16 * $sp.getTidalVolume())
+      };
+      System.out.println("Minute volume calculated: " + $sp.getMinuteVolume());
+end
+
+rule "pressure calculation"
+    no-loop
+    when
+        $p: Patient()
+        $sp: StablePatientParams(patientId == $p.getId(), tidalVolume != null)
+    then
+        modify($sp){
+          setPressure($sp.getTidalVolume() / $p.getCompliance())
+        };
+        System.out.println("Pressure calculated: " + $sp.getPressure());
+end
+
+rule "gas flow calculation"
+    no-loop
+    when
+        $p: Patient()
+        $sp: StablePatientParams(patientId == $p.getId(), pressure != null)
+    then
+        modify($sp){
+          setGasFlow($sp.getPressure() / $p.getResistance())
+        };
+        System.out.println("Gas flow calculated: " + $sp.getGasFlow());
+end
+
+

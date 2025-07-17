@@ -1,0 +1,65 @@
+package backward;
+
+import com.ftn.sbnz.model.models.RespiratorMode
+import com.ftn.sbnz.model.models.ChangeRecord
+import com.ftn.sbnz.model.models.Patient
+import com.ftn.sbnz.model.models.ModeMessage
+
+
+// doadati query koji ce pronaci pacijenta sa najboljim i najgorim promenama u poslednja 24h
+
+
+query isModeAppropriate(
+        String name,
+        String group,
+        Boolean patientConscious,
+        Double participationPercentage,
+        Double deltaPO2,
+        Double deltaPCO2
+    )
+    $rm: RespiratorMode(
+        name,
+        group,
+        patientConscious;
+    )
+    eval(
+        participationPercentage > $rm.getParticipationPercentageLB() &&
+        participationPercentage < $rm.getParticipationPercentageUB() ||
+        deltaPO2 > $rm.getpO2LB() && deltaPO2 < $rm.getpO2UB() ||
+        deltaPCO2 > $rm.getpCO2LB() && deltaPCO2 < $rm.getpCO2UB()
+    )
+end
+
+rule "find appropriate mode"
+    when
+        $patient: Patient(FiO2 >= 75)
+        $changeRecord: ChangeRecord(patientId == $patient.getId())
+        isModeAppropriate(
+            mode,
+            type,
+            $patient.getConscious(),
+            $patient.getParticipationPercentage(),
+            $changeRecord.getDeltaPO2(),
+            $changeRecord.getDeltaPCO2()
+            ;
+        )
+    then
+        System.out.println("Recommended mode is: " + mode + " (" + type + ").");
+end
+
+rule "check chosen mode"
+    when
+        $patient: Patient(FiO2 >= 75)
+        $changeRecord: ChangeRecord(patientId == $patient.getId())
+        isModeAppropriate(
+            $changeRecord.getChosenMode(), // ovde templejte
+            type,
+            $patient.getConscious(),
+            $patient.getParticipationPercentage(),
+            $changeRecord.getDeltaPO2(),
+            $changeRecord.getDeltaPCO2()
+            ;
+        )
+    then
+        System.out.println("Chosen mode is appropriate.");
+end

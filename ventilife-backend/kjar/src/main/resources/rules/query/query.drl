@@ -1,0 +1,27 @@
+package rules.query;
+
+import com.ftn.sbnz.model.models.Patient;
+import com.ftn.sbnz.model.models.ChangeRecord;
+
+query "getMaxDeltaPCO2Patient"
+    $maxRecord : ChangeRecord() from accumulate(
+        $record: ChangeRecord($deltaPCO2 : deltaPCO2),
+        init(ChangeRecord maxRecord = null; double maxDeltaPCO2 = Double.MIN_VALUE;),
+        action(if($deltaPCO2 > maxDeltaPCO2) { maxDeltaPCO2 = $deltaPCO2; maxRecord = $record; }),
+        reverse( ),
+        result(maxRecord)
+    )
+    $patient: Patient(id == $maxRecord.getPatientId())
+end
+
+query "getMinDeltaPO2Patient"
+    $minRecord : ChangeRecord() from accumulate(
+        $record: ChangeRecord($deltaPO2 : deltaPO2),
+        init(ChangeRecord minRecord = null; double minDeltaPO2 = Double.MAX_VALUE;),
+        action(if($deltaPO2 < minDeltaPO2) { minDeltaPO2 = $deltaPO2; minRecord = $record; }),
+        reverse( ),
+        result(minRecord)
+    )
+    $patient: Patient(id == $minRecord.getPatientId())
+end
+

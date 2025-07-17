@@ -1,0 +1,30 @@
+package rules.simple;
+
+import com.ftn.sbnz.model.models.Patient
+import com.ftn.sbnz.model.models.ChangeRecord
+
+rule "change mode worse"
+    no-loop
+    when
+        $patient: Patient(FiO2 >= 75)
+        $changeRecord: ChangeRecord(patientId == $patient.getId())
+    then
+        modify($patient){
+            setRespiratorMode($changeRecord.getChosenMode()),
+            setFiO2(25.0)
+        }
+        delete($patient);
+end
+
+rule "change mode better"
+    no-loop
+    when
+        $patient: Patient(FiO2 <= 25)
+        $changeRecord: ChangeRecord(patientId == $patient.getId())
+    then
+        modify($patient){
+            setRespiratorMode($changeRecord.getChosenMode()),
+            setFiO2(75.0)
+        }
+        delete($patient);
+end

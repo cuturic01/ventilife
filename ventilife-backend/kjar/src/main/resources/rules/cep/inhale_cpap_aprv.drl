@@ -1,0 +1,37 @@
+package cep;
+
+import com.ftn.sbnz.model.events.ChangeEvent
+import com.ftn.sbnz.model.events.PO2Change
+import com.ftn.sbnz.model.events.InhaleEvent
+import com.ftn.sbnz.model.models.Patient
+import com.ftn.sbnz.model.models.ChangeRecord
+import com.ftn.sbnz.model.models.ResponseMessage
+
+rule "inhale event"
+    no-loop
+    when
+        $responseMessage: ResponseMessage()
+        $patient: Patient($id: id, respiratorMode == "CPAP" || respiratorMode == "APRV", FiO2 < 75)
+        Number(doubleValue < $patient.getMinuteVolume()) from accumulate(
+            $ie: InhaleEvent(patientId == $id)
+            over window: time(1m), sum($ie.getInhaledVolume())
+        )
+    then
+        modify($patient){setFiO2($patient.getFiO2() + 25)};
+        modify($responseMessage){setMessage("Patient FiO2 increased: " + $patient.getFiO2())};
+        System.out.println("Patient FiO2 increased: " + $patient.getFiO2());
+end
+
+rule "spontaneus to assisted inhale event"
+    no-loop
+    when
+        $responseMessage: ResponseMessage()
+        $patient: Patient($id: id, respiratorMode == "CPAP" || respiratorMode == "APRV", FiO2 >= 75)
+        Number(doubleValue < $patient.getMinuteVolume()) from accumulate(
+            $ie: InhaleEvent(patientId == $id)
+            over window: time(1m), sum($ie.getInhaledVolume())
+        )
+    then
+        modify($responseMessage){setMessage("Patient FiO2 reached 75%. Consider changing the mode.")};
+        System.out.println("Patient FiO2 reached 75%. Consider changing the mode.");
+end

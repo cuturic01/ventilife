@@ -1,0 +1,21 @@
+<mat-toolbar>
+  <mat-toolbar-row>
+    <div id="left-buttons">
+      <button class="nav_bar_logo_button" (click)="goHome()">
+        <span>Ventilife</span>
+      </button>
+      <div *ngIf="user !== null">
+        <button class="nav_bar_button" (click)="patients()"> Patients </button>
+        <button class="nav_bar_button" (click)="reports()"> Reports </button>
+      </div>
+    </div>
+    <span class="flexExpand"></span>
+    <div *ngIf="user === null">
+      <button class="nav_bar_button" (click)="login()"> Login / Register </button>
+    </div>
+    <div *ngIf="user !== null">
+      <button class="nav_bar_button" (click)="logout()"> Logout </button>
+    </div>
+
+  </mat-toolbar-row>
+</mat-toolbar>

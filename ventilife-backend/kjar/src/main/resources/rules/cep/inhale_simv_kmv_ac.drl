@@ -1,0 +1,108 @@
+package cep;
+
+import com.ftn.sbnz.model.events.ChangeEvent
+import com.ftn.sbnz.model.events.PO2Change
+import com.ftn.sbnz.model.events.InhaleEvent
+import com.ftn.sbnz.model.models.Patient
+import com.ftn.sbnz.model.models.ChangeRecord
+import com.ftn.sbnz.model.events.InhaleEvent
+import com.ftn.sbnz.model.models.ResponseMessage
+
+
+rule "inhale event control variable level 1"
+    no-loop
+    when
+        $responseMessage: ResponseMessage()
+        $patient: Patient($id: id, respiratorMode == "SIMV" || respiratorMode == "KMV_AC", volumeControlled == true)
+        Number(doubleValue < $patient.getMinuteVolume()) from accumulate(
+            $ie: InhaleEvent(patientId == $id)
+            over window: time(1m), sum($ie.getInhaledVolume())
+        )
+    then
+        modify($patient) {
+            setVolumeControlled(false)
+        };
+        modify($responseMessage){
+            setMessage("Control variable changed.")
+        };
+        System.out.println("Control variable changed.");
+end
+
+rule "inhale event control variable level 2"
+    no-loop
+    when
+        $responseMessage: ResponseMessage()
+        $patient: Patient($id: id, respiratorMode == "SIMV" || respiratorMode == "KMV_AC", volumeControlled == false)
+    then
+        modify($patient) {
+            setPressure(2.5)
+        };
+         modify($responseMessage){
+            setMessage($responseMessage.getMessage() + " Pressure changed to 2.5.")
+         };
+        System.out.println("Pressure changed.");
+end
+
+rule "change event control variable level 3"
+    no-loop
+    when
+        $responseMessage: ResponseMessage()
+        $patient: Patient(
+            $id: id, respiratorMode == "SIMV" || respiratorMode == "KMV_AC",
+            volumeControlled == false,
+            pressure == 2.5
+        )
+    then
+        modify($patient) {
+            setTidalVolume(
+                ($patient.getCompliance() * $patient.getPressure() -
+                $patient.getCompliance() * $patient.getGasFlow() * $patient.getResistance()) * 100
+            ),
+            setFrequency((int) ($patient.getMinuteVolume() / $patient.getTidalVolume()))
+        };
+        modify($responseMessage){
+            setMessage($responseMessage.getMessage() + "\n"  + "Tidal volume:" + $patient.getTidalVolume() + " freq: " + $patient.getFrequency())
+        };
+        System.out.println("Tidal volume:" + $patient.getTidalVolume() + " freq: " + $patient.getFrequency());
+end
+
+rule "inhale event FiO2"
+    no-loop
+    when
+        $responseMessage: ResponseMessage(message == null)
+        $patient: Patient(
+            $id: id, respiratorMode == "SIMV" || respiratorMode == "KMV_AC",
+            FiO2 < 75,
+            volumeControlled == false
+        )
+        Number(doubleValue < $patient.getMinuteVolume()) from accumulate(
+            $ie: InhaleEvent(patientId == $id)
+            over window: time(1m), sum($ie.getInhaledVolume())
+        )
+    then
+        modify($patient){setFiO2($patient.getFiO2() + 25)};
+        modify($responseMessage){
+            setMessage("Patient FiO2 increased: " + $patient.getFiO2())
+        };
+        System.out.println("Patient FiO2 increased: " + $patient.getFiO2());
+end
+
+rule "inhale event FiO2 cap"
+    no-loop
+    when
+        $responseMessage: ResponseMessage(message == null)
+        $patient: Patient(
+            $id: id, respiratorMode == "SIMV" || respiratorMode == "KMV_AC",
+            FiO2 >= 75,
+            volumeControlled == false
+        )
+        Number(doubleValue < $patient.getMinuteVolume()) from accumulate(
+            $ie: InhaleEvent(patientId == $id)
+            over window: time(1m), sum($ie.getInhaledVolume())
+        )
+    then
+        modify($responseMessage){
+            setMessage("Patient FiO2 reached 75%.")
+        };
+        System.out.println("Patient FiO2 reached 75%.");
+end
